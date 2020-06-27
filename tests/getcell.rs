@@ -38,12 +38,13 @@ define_language! {
     enum Prop {
         // Bool(bool),
         /* TODO: use enum */
-        Dir(Symbol),
         /* TODO: second arg should only be a Dir. how to specify in egg? */
         "GetCell" = GetCell([Id; 2]),
         "cell" = Cell([Id; 2]),
-        Num(i32),
         "list" = List([Id; 2]),
+        "x" = X,
+        Num(i32),
+        Symbol(Symbol),
         // "&" = And([Id; 2]),
         // "~" = Not(Id),
         // "|" = Or([Id; 2]),
@@ -54,6 +55,41 @@ define_language! {
 
 type EGraph = egg::EGraph<Prop, ()>;
 type Rewrite = egg::Rewrite<Prop, ()>;
+
+// pub struct CostFn;
+// impl egg::CostFunction<Prop> for CostFn {
+//   type Cost = f64;
+
+//   fn cost(&mut self, enode: &egg::ENode<Prop, Cost>) -> Cost {
+//     use Prop::*;
+//     const BIG: f64 = 100_000_000.0;
+//     const SMALL: f64 = 0.001;
+
+//     let cost = match enode.op {
+//       Symbol(egg::Symbol::from_str("x")) => SMALL,
+//       _ => 1.0,
+//     };
+
+//     cost + enode.children.iter().sum::<Cost>()
+//   }
+// }
+
+struct CostFn;
+impl CostFunction<Prop> for CostFn {
+  type Cost = f64;
+
+  // you're passed in an enode whose children are costs instead of eclass ids
+  fn cost<C>(&mut self, enode: &Prop, mut costs: C) -> Self::Cost
+  where
+    C: FnMut(Id) -> Self::Cost,
+  {
+    let op_cost = match enode {
+      Prop::X => 0.001,
+      _ => 1.0,
+    };
+    enode.fold(op_cost, |sum, id| sum + costs(id))
+  }
+}
 
 macro_rules! rule {
     ($name:ident, $left:literal, $right:literal) => {
@@ -120,14 +156,22 @@ fn prove_something(name: &str, start: &str, rewrites: &[Rewrite], goals: &[&str]
   let start_expr: RecExpr<_> = start.parse().unwrap();
   let goal_exprs: Vec<RecExpr<_>> = goals.iter().map(|g| g.parse().unwrap()).collect();
 
-  let egraph = Runner::default()
+  let runner = Runner::default()
     .with_iter_limit(20)
     .with_node_limit(5_000)
     .with_expr(&start_expr)
-    .run(rewrites)
-    .egraph;
+    .run(rewrites);
+
+  let (egraph, root) = (runner.egraph, runner.roots[0]);
 
   egraph.dot().to_dot("target/getcell.dot").unwrap();
+
+  let mut extractor = Extractor::new(&egraph, CostFn);
+  let (best_cost, best) = extractor.find_best(root);
+  println!("best cost {}", best_cost);
+  println!("best {}", best);
+  // assert_eq!(best_cost, 1);
+  // assert_eq!(best, "10".parse().unwrap());
 
   for (i, (goal_expr, goal_str)) in goal_exprs.iter().zip(goals).enumerate() {
     println!("Trying to prove goal {}: {}", i, goal_str);
