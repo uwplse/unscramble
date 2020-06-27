@@ -17,30 +17,30 @@ type Rewrite = egg::Rewrite<Prop, ConstantFold>;
 #[derive(Default)]
 struct ConstantFold;
 impl Analysis<Prop> for ConstantFold {
-    type Data = Option<bool>;
-    fn merge(&self, to: &mut Self::Data, from: Self::Data) -> bool {
-        merge_if_different(to, to.or(from))
+  type Data = Option<bool>;
+  fn merge(&self, to: &mut Self::Data, from: Self::Data) -> bool {
+    merge_if_different(to, to.or(from))
+  }
+  fn make(egraph: &EGraph, enode: &Prop) -> Self::Data {
+    let x = |i: &Id| egraph[*i].data;
+    let result = match enode {
+      Prop::Bool(c) => Some(*c),
+      Prop::Symbol(_) => None,
+      Prop::And([a, b]) => Some(x(a)? && x(b)?),
+      Prop::Not(a) => Some(!x(a)?),
+      Prop::Or([a, b]) => Some(x(a)? || x(b)?),
+      Prop::Implies([a, b]) => Some(x(a)? || !x(b)?),
+    };
+    println!("Make: {:?} -> {:?}", enode, result);
+    result
+  }
+  fn modify(egraph: &mut EGraph, id: Id) {
+    println!("Modifying {}", id);
+    if let Some(c) = egraph[id].data {
+      let const_id = egraph.add(Prop::Bool(c));
+      egraph.union(id, const_id);
     }
-    fn make(egraph: &EGraph, enode: &Prop) -> Self::Data {
-        let x = |i: &Id| egraph[*i].data;
-        let result = match enode {
-            Prop::Bool(c) => Some(*c),
-            Prop::Symbol(_) => None,
-            Prop::And([a, b]) => Some(x(a)? && x(b)?),
-            Prop::Not(a) => Some(!x(a)?),
-            Prop::Or([a, b]) => Some(x(a)? || x(b)?),
-            Prop::Implies([a, b]) => Some(x(a)? || !x(b)?),
-        };
-        println!("Make: {:?} -> {:?}", enode, result);
-        result
-    }
-    fn modify(egraph: &mut EGraph, id: Id) {
-        println!("Modifying {}", id);
-        if let Some(c) = egraph[id].data {
-            let const_id = egraph.add(Prop::Bool(c));
-            egraph.union(id, const_id);
-        }
-    }
+  }
 }
 
 macro_rules! rule {
@@ -70,82 +70,82 @@ rule! {contrapositive, "(-> ?a ?b)",    "(-> (~ ?b) (~ ?a))"     }
 rule! {lem_imply, "(& (-> ?a ?b) (-> (~ ?a) ?c))", "(| ?b ?c)"}
 
 fn prove_something(name: &str, start: &str, rewrites: &[Rewrite], goals: &[&str]) {
-    let _ = env_logger::builder().is_test(true).try_init();
-    println!("Proving {}", name);
+  let _ = env_logger::builder().is_test(true).try_init();
+  println!("Proving {}", name);
 
-    let start_expr: RecExpr<_> = start.parse().unwrap();
-    let goal_exprs: Vec<RecExpr<_>> = goals.iter().map(|g| g.parse().unwrap()).collect();
+  let start_expr: RecExpr<_> = start.parse().unwrap();
+  let goal_exprs: Vec<RecExpr<_>> = goals.iter().map(|g| g.parse().unwrap()).collect();
 
-    let egraph = Runner::default()
-        .with_iter_limit(20)
-        .with_node_limit(5_000)
-        .with_expr(&start_expr)
-        .run(rewrites)
-        .egraph;
+  let egraph = Runner::default()
+    .with_iter_limit(20)
+    .with_node_limit(5_000)
+    .with_expr(&start_expr)
+    .run(rewrites)
+    .egraph;
 
-    for (i, (goal_expr, goal_str)) in goal_exprs.iter().zip(goals).enumerate() {
-        println!("Trying to prove goal {}: {}", i, goal_str);
-        let equivs = egraph.equivs(&start_expr, &goal_expr);
-        if equivs.is_empty() {
-            panic!("Couldn't prove goal {}: {}", i, goal_str);
-        }
+  for (i, (goal_expr, goal_str)) in goal_exprs.iter().zip(goals).enumerate() {
+    println!("Trying to prove goal {}: {}", i, goal_str);
+    let equivs = egraph.equivs(&start_expr, &goal_expr);
+    if equivs.is_empty() {
+      panic!("Couldn't prove goal {}: {}", i, goal_str);
     }
+  }
 }
 
 #[test]
 fn prove_contrapositive() {
-    let _ = env_logger::builder().is_test(true).try_init();
-    let rules = &[def_imply(), def_imply_flip(), double_neg_flip(), comm_or()];
-    prove_something(
-        "contrapositive",
-        "(-> x y)",
-        rules,
-        &[
-            "(-> x y)",
-            "(| (~ x) y)",
-            "(| (~ x) (~ (~ y)))",
-            "(| (~ (~ y)) (~ x))",
-            "(-> (~ y) (~ x))",
-        ],
-    );
+  let _ = env_logger::builder().is_test(true).try_init();
+  let rules = &[def_imply(), def_imply_flip(), double_neg_flip(), comm_or()];
+  prove_something(
+    "contrapositive",
+    "(-> x y)",
+    rules,
+    &[
+      "(-> x y)",
+      "(| (~ x) y)",
+      "(| (~ x) (~ (~ y)))",
+      "(| (~ (~ y)) (~ x))",
+      "(-> (~ y) (~ x))",
+    ],
+  );
 }
 
 #[test]
 fn prove_chain() {
-    let _ = env_logger::builder().is_test(true).try_init();
-    let rules = &[
-        // rules needed for contrapositive
-        def_imply(),
-        def_imply_flip(),
-        double_neg_flip(),
-        comm_or(),
-        // and some others
-        comm_and(),
-        lem_imply(),
-    ];
-    prove_something(
-        "chain",
-        "(& (-> x y) (-> y z))",
-        rules,
-        &[
-            "(& (-> x y) (-> y z))",
-            "(& (-> (~ y) (~ x)) (-> y z))",
-            "(& (-> y z)         (-> (~ y) (~ x)))",
-            "(| z (~ x))",
-            "(| (~ x) z)",
-            "(-> x z)",
-        ],
-    );
+  let _ = env_logger::builder().is_test(true).try_init();
+  let rules = &[
+    // rules needed for contrapositive
+    def_imply(),
+    def_imply_flip(),
+    double_neg_flip(),
+    comm_or(),
+    // and some others
+    comm_and(),
+    lem_imply(),
+  ];
+  prove_something(
+    "chain",
+    "(& (-> x y) (-> y z))",
+    rules,
+    &[
+      "(& (-> x y) (-> y z))",
+      "(& (-> (~ y) (~ x)) (-> y z))",
+      "(& (-> y z)         (-> (~ y) (~ x)))",
+      "(| z (~ x))",
+      "(| (~ x) z)",
+      "(-> x z)",
+    ],
+  );
 }
 
 #[test]
 fn const_fold() {
-    let start = "(| (& false true) (& true false))";
-    let start_expr = start.parse().unwrap();
-    let end = "false";
-    let end_expr = end.parse().unwrap();
-    let mut eg = EGraph::default();
-    eg.add_expr(&start_expr);
-    eg.rebuild();
-    assert!(!eg.equivs(&start_expr, &end_expr).is_empty());
+  let start = "(| (& false true) (& true false))";
+  let start_expr = start.parse().unwrap();
+  let end = "false";
+  let end_expr = end.parse().unwrap();
+  let mut eg = EGraph::default();
+  eg.add_expr(&start_expr);
+  eg.rebuild();
+  assert!(!eg.equivs(&start_expr, &end_expr).is_empty());
 }
