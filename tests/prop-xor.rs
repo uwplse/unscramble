@@ -7,6 +7,8 @@ define_language! {
         "vec" = PVec([Id; 4]),
         "&" = And(Id),
         "~" = Not(Id),
+        "pi1" = Pi1(Id),
+        "pi2" = Pi2(Id),
         // "|" = Or([Id; 2]),
         // "->" = Implies([Id; 2]),
         "x" = X,
@@ -344,6 +346,523 @@ rev_rule! {and_ttttttft, "(& (vec (pr true true) (pr true true) (pr true true) (
 rev_rule! {and_tttttttf, "(& (vec (pr true true) (pr true true) (pr true true) (pr true false)))",  "(vec true true true false)"}
 rev_rule! {and_tttttttt, "(& (vec (pr true true) (pr true true) (pr true true) (pr true true)))",  "(vec true true true true)"}
 
+// rev_rule! {pi1, "(pi1 (vec (pr ?x1 ?y1) (pr ?x2 ?y2) (pr ?x3 ?y3) (pr ?x4 ?y4)))", "(vec ?x1 ?x2 ?x3 ?x4)"}
+// rev_rule! {pi2, "(pi2 (vec (pr ?x1 ?y1) (pr ?x2 ?y2) (pr ?x3 ?y3) (pr ?x4 ?y4)))", "(vec ?y1 ?y2 ?y3 ?y4)"}
+
+rev_rule! {pi1_ffffffff, "(pi1 (vec (pr false false) (pr false false) (pr false false) (pr false false)))",  "(vec false false false false)"}
+rev_rule! {pi1_ffffffft, "(pi1 (vec (pr false false) (pr false false) (pr false false) (pr false true)))",  "(vec false false false false)"}
+rev_rule! {pi1_fffffftf, "(pi1 (vec (pr false false) (pr false false) (pr false false) (pr true false)))",  "(vec false false false true)"}
+rev_rule! {pi1_fffffftt, "(pi1 (vec (pr false false) (pr false false) (pr false false) (pr true true)))",  "(vec false false false true)"}
+rev_rule! {pi1_ffffftff, "(pi1 (vec (pr false false) (pr false false) (pr false true) (pr false false)))",  "(vec false false false false)"}
+rev_rule! {pi1_ffffftft, "(pi1 (vec (pr false false) (pr false false) (pr false true) (pr false true)))",  "(vec false false false false)"}
+rev_rule! {pi1_fffffttf, "(pi1 (vec (pr false false) (pr false false) (pr false true) (pr true false)))",  "(vec false false false true)"}
+rev_rule! {pi1_fffffttt, "(pi1 (vec (pr false false) (pr false false) (pr false true) (pr true true)))",  "(vec false false false true)"}
+rev_rule! {pi1_fffftfff, "(pi1 (vec (pr false false) (pr false false) (pr true false) (pr false false)))",  "(vec false false true false)"}
+rev_rule! {pi1_fffftfft, "(pi1 (vec (pr false false) (pr false false) (pr true false) (pr false true)))",  "(vec false false true false)"}
+rev_rule! {pi1_fffftftf, "(pi1 (vec (pr false false) (pr false false) (pr true false) (pr true false)))",  "(vec false false true true)"}
+rev_rule! {pi1_fffftftt, "(pi1 (vec (pr false false) (pr false false) (pr true false) (pr true true)))",  "(vec false false true true)"}
+rev_rule! {pi1_ffffttff, "(pi1 (vec (pr false false) (pr false false) (pr true true) (pr false false)))",  "(vec false false true false)"}
+rev_rule! {pi1_ffffttft, "(pi1 (vec (pr false false) (pr false false) (pr true true) (pr false true)))",  "(vec false false true false)"}
+rev_rule! {pi1_fffftttf, "(pi1 (vec (pr false false) (pr false false) (pr true true) (pr true false)))",  "(vec false false true true)"}
+rev_rule! {pi1_fffftttt, "(pi1 (vec (pr false false) (pr false false) (pr true true) (pr true true)))",  "(vec false false true true)"}
+rev_rule! {pi1_ffftffff, "(pi1 (vec (pr false false) (pr false true) (pr false false) (pr false false)))",  "(vec false false false false)"}
+rev_rule! {pi1_ffftffft, "(pi1 (vec (pr false false) (pr false true) (pr false false) (pr false true)))",  "(vec false false false false)"}
+rev_rule! {pi1_ffftfftf, "(pi1 (vec (pr false false) (pr false true) (pr false false) (pr true false)))",  "(vec false false false true)"}
+rev_rule! {pi1_ffftfftt, "(pi1 (vec (pr false false) (pr false true) (pr false false) (pr true true)))",  "(vec false false false true)"}
+rev_rule! {pi1_ffftftff, "(pi1 (vec (pr false false) (pr false true) (pr false true) (pr false false)))",  "(vec false false false false)"}
+rev_rule! {pi1_ffftftft, "(pi1 (vec (pr false false) (pr false true) (pr false true) (pr false true)))",  "(vec false false false false)"}
+rev_rule! {pi1_ffftfttf, "(pi1 (vec (pr false false) (pr false true) (pr false true) (pr true false)))",  "(vec false false false true)"}
+rev_rule! {pi1_ffftfttt, "(pi1 (vec (pr false false) (pr false true) (pr false true) (pr true true)))",  "(vec false false false true)"}
+rev_rule! {pi1_fffttfff, "(pi1 (vec (pr false false) (pr false true) (pr true false) (pr false false)))",  "(vec false false true false)"}
+rev_rule! {pi1_fffttfft, "(pi1 (vec (pr false false) (pr false true) (pr true false) (pr false true)))",  "(vec false false true false)"}
+rev_rule! {pi1_fffttftf, "(pi1 (vec (pr false false) (pr false true) (pr true false) (pr true false)))",  "(vec false false true true)"}
+rev_rule! {pi1_fffttftt, "(pi1 (vec (pr false false) (pr false true) (pr true false) (pr true true)))",  "(vec false false true true)"}
+rev_rule! {pi1_ffftttff, "(pi1 (vec (pr false false) (pr false true) (pr true true) (pr false false)))",  "(vec false false true false)"}
+rev_rule! {pi1_ffftttft, "(pi1 (vec (pr false false) (pr false true) (pr true true) (pr false true)))",  "(vec false false true false)"}
+rev_rule! {pi1_fffttttf, "(pi1 (vec (pr false false) (pr false true) (pr true true) (pr true false)))",  "(vec false false true true)"}
+rev_rule! {pi1_fffttttt, "(pi1 (vec (pr false false) (pr false true) (pr true true) (pr true true)))",  "(vec false false true true)"}
+rev_rule! {pi1_fftfffff, "(pi1 (vec (pr false false) (pr true false) (pr false false) (pr false false)))",  "(vec false true false false)"}
+rev_rule! {pi1_fftfffft, "(pi1 (vec (pr false false) (pr true false) (pr false false) (pr false true)))",  "(vec false true false false)"}
+rev_rule! {pi1_fftffftf, "(pi1 (vec (pr false false) (pr true false) (pr false false) (pr true false)))",  "(vec false true false true)"}
+rev_rule! {pi1_fftffftt, "(pi1 (vec (pr false false) (pr true false) (pr false false) (pr true true)))",  "(vec false true false true)"}
+rev_rule! {pi1_fftfftff, "(pi1 (vec (pr false false) (pr true false) (pr false true) (pr false false)))",  "(vec false true false false)"}
+rev_rule! {pi1_fftfftft, "(pi1 (vec (pr false false) (pr true false) (pr false true) (pr false true)))",  "(vec false true false false)"}
+rev_rule! {pi1_fftffttf, "(pi1 (vec (pr false false) (pr true false) (pr false true) (pr true false)))",  "(vec false true false true)"}
+rev_rule! {pi1_fftffttt, "(pi1 (vec (pr false false) (pr true false) (pr false true) (pr true true)))",  "(vec false true false true)"}
+rev_rule! {pi1_fftftfff, "(pi1 (vec (pr false false) (pr true false) (pr true false) (pr false false)))",  "(vec false true true false)"}
+rev_rule! {pi1_fftftfft, "(pi1 (vec (pr false false) (pr true false) (pr true false) (pr false true)))",  "(vec false true true false)"}
+rev_rule! {pi1_fftftftf, "(pi1 (vec (pr false false) (pr true false) (pr true false) (pr true false)))",  "(vec false true true true)"}
+rev_rule! {pi1_fftftftt, "(pi1 (vec (pr false false) (pr true false) (pr true false) (pr true true)))",  "(vec false true true true)"}
+rev_rule! {pi1_fftfttff, "(pi1 (vec (pr false false) (pr true false) (pr true true) (pr false false)))",  "(vec false true true false)"}
+rev_rule! {pi1_fftfttft, "(pi1 (vec (pr false false) (pr true false) (pr true true) (pr false true)))",  "(vec false true true false)"}
+rev_rule! {pi1_fftftttf, "(pi1 (vec (pr false false) (pr true false) (pr true true) (pr true false)))",  "(vec false true true true)"}
+rev_rule! {pi1_fftftttt, "(pi1 (vec (pr false false) (pr true false) (pr true true) (pr true true)))",  "(vec false true true true)"}
+rev_rule! {pi1_ffttffff, "(pi1 (vec (pr false false) (pr true true) (pr false false) (pr false false)))",  "(vec false true false false)"}
+rev_rule! {pi1_ffttffft, "(pi1 (vec (pr false false) (pr true true) (pr false false) (pr false true)))",  "(vec false true false false)"}
+rev_rule! {pi1_ffttfftf, "(pi1 (vec (pr false false) (pr true true) (pr false false) (pr true false)))",  "(vec false true false true)"}
+rev_rule! {pi1_ffttfftt, "(pi1 (vec (pr false false) (pr true true) (pr false false) (pr true true)))",  "(vec false true false true)"}
+rev_rule! {pi1_ffttftff, "(pi1 (vec (pr false false) (pr true true) (pr false true) (pr false false)))",  "(vec false true false false)"}
+rev_rule! {pi1_ffttftft, "(pi1 (vec (pr false false) (pr true true) (pr false true) (pr false true)))",  "(vec false true false false)"}
+rev_rule! {pi1_ffttfttf, "(pi1 (vec (pr false false) (pr true true) (pr false true) (pr true false)))",  "(vec false true false true)"}
+rev_rule! {pi1_ffttfttt, "(pi1 (vec (pr false false) (pr true true) (pr false true) (pr true true)))",  "(vec false true false true)"}
+rev_rule! {pi1_fftttfff, "(pi1 (vec (pr false false) (pr true true) (pr true false) (pr false false)))",  "(vec false true true false)"}
+rev_rule! {pi1_fftttfft, "(pi1 (vec (pr false false) (pr true true) (pr true false) (pr false true)))",  "(vec false true true false)"}
+rev_rule! {pi1_fftttftf, "(pi1 (vec (pr false false) (pr true true) (pr true false) (pr true false)))",  "(vec false true true true)"}
+rev_rule! {pi1_fftttftt, "(pi1 (vec (pr false false) (pr true true) (pr true false) (pr true true)))",  "(vec false true true true)"}
+rev_rule! {pi1_ffttttff, "(pi1 (vec (pr false false) (pr true true) (pr true true) (pr false false)))",  "(vec false true true false)"}
+rev_rule! {pi1_ffttttft, "(pi1 (vec (pr false false) (pr true true) (pr true true) (pr false true)))",  "(vec false true true false)"}
+rev_rule! {pi1_fftttttf, "(pi1 (vec (pr false false) (pr true true) (pr true true) (pr true false)))",  "(vec false true true true)"}
+rev_rule! {pi1_fftttttt, "(pi1 (vec (pr false false) (pr true true) (pr true true) (pr true true)))",  "(vec false true true true)"}
+rev_rule! {pi1_ftffffff, "(pi1 (vec (pr false true) (pr false false) (pr false false) (pr false false)))",  "(vec false false false false)"}
+rev_rule! {pi1_ftffffft, "(pi1 (vec (pr false true) (pr false false) (pr false false) (pr false true)))",  "(vec false false false false)"}
+rev_rule! {pi1_ftfffftf, "(pi1 (vec (pr false true) (pr false false) (pr false false) (pr true false)))",  "(vec false false false true)"}
+rev_rule! {pi1_ftfffftt, "(pi1 (vec (pr false true) (pr false false) (pr false false) (pr true true)))",  "(vec false false false true)"}
+rev_rule! {pi1_ftffftff, "(pi1 (vec (pr false true) (pr false false) (pr false true) (pr false false)))",  "(vec false false false false)"}
+rev_rule! {pi1_ftffftft, "(pi1 (vec (pr false true) (pr false false) (pr false true) (pr false true)))",  "(vec false false false false)"}
+rev_rule! {pi1_ftfffttf, "(pi1 (vec (pr false true) (pr false false) (pr false true) (pr true false)))",  "(vec false false false true)"}
+rev_rule! {pi1_ftfffttt, "(pi1 (vec (pr false true) (pr false false) (pr false true) (pr true true)))",  "(vec false false false true)"}
+rev_rule! {pi1_ftfftfff, "(pi1 (vec (pr false true) (pr false false) (pr true false) (pr false false)))",  "(vec false false true false)"}
+rev_rule! {pi1_ftfftfft, "(pi1 (vec (pr false true) (pr false false) (pr true false) (pr false true)))",  "(vec false false true false)"}
+rev_rule! {pi1_ftfftftf, "(pi1 (vec (pr false true) (pr false false) (pr true false) (pr true false)))",  "(vec false false true true)"}
+rev_rule! {pi1_ftfftftt, "(pi1 (vec (pr false true) (pr false false) (pr true false) (pr true true)))",  "(vec false false true true)"}
+rev_rule! {pi1_ftffttff, "(pi1 (vec (pr false true) (pr false false) (pr true true) (pr false false)))",  "(vec false false true false)"}
+rev_rule! {pi1_ftffttft, "(pi1 (vec (pr false true) (pr false false) (pr true true) (pr false true)))",  "(vec false false true false)"}
+rev_rule! {pi1_ftfftttf, "(pi1 (vec (pr false true) (pr false false) (pr true true) (pr true false)))",  "(vec false false true true)"}
+rev_rule! {pi1_ftfftttt, "(pi1 (vec (pr false true) (pr false false) (pr true true) (pr true true)))",  "(vec false false true true)"}
+rev_rule! {pi1_ftftffff, "(pi1 (vec (pr false true) (pr false true) (pr false false) (pr false false)))",  "(vec false false false false)"}
+rev_rule! {pi1_ftftffft, "(pi1 (vec (pr false true) (pr false true) (pr false false) (pr false true)))",  "(vec false false false false)"}
+rev_rule! {pi1_ftftfftf, "(pi1 (vec (pr false true) (pr false true) (pr false false) (pr true false)))",  "(vec false false false true)"}
+rev_rule! {pi1_ftftfftt, "(pi1 (vec (pr false true) (pr false true) (pr false false) (pr true true)))",  "(vec false false false true)"}
+rev_rule! {pi1_ftftftff, "(pi1 (vec (pr false true) (pr false true) (pr false true) (pr false false)))",  "(vec false false false false)"}
+rev_rule! {pi1_ftftftft, "(pi1 (vec (pr false true) (pr false true) (pr false true) (pr false true)))",  "(vec false false false false)"}
+rev_rule! {pi1_ftftfttf, "(pi1 (vec (pr false true) (pr false true) (pr false true) (pr true false)))",  "(vec false false false true)"}
+rev_rule! {pi1_ftftfttt, "(pi1 (vec (pr false true) (pr false true) (pr false true) (pr true true)))",  "(vec false false false true)"}
+rev_rule! {pi1_ftfttfff, "(pi1 (vec (pr false true) (pr false true) (pr true false) (pr false false)))",  "(vec false false true false)"}
+rev_rule! {pi1_ftfttfft, "(pi1 (vec (pr false true) (pr false true) (pr true false) (pr false true)))",  "(vec false false true false)"}
+rev_rule! {pi1_ftfttftf, "(pi1 (vec (pr false true) (pr false true) (pr true false) (pr true false)))",  "(vec false false true true)"}
+rev_rule! {pi1_ftfttftt, "(pi1 (vec (pr false true) (pr false true) (pr true false) (pr true true)))",  "(vec false false true true)"}
+rev_rule! {pi1_ftftttff, "(pi1 (vec (pr false true) (pr false true) (pr true true) (pr false false)))",  "(vec false false true false)"}
+rev_rule! {pi1_ftftttft, "(pi1 (vec (pr false true) (pr false true) (pr true true) (pr false true)))",  "(vec false false true false)"}
+rev_rule! {pi1_ftfttttf, "(pi1 (vec (pr false true) (pr false true) (pr true true) (pr true false)))",  "(vec false false true true)"}
+rev_rule! {pi1_ftfttttt, "(pi1 (vec (pr false true) (pr false true) (pr true true) (pr true true)))",  "(vec false false true true)"}
+rev_rule! {pi1_fttfffff, "(pi1 (vec (pr false true) (pr true false) (pr false false) (pr false false)))",  "(vec false true false false)"}
+rev_rule! {pi1_fttfffft, "(pi1 (vec (pr false true) (pr true false) (pr false false) (pr false true)))",  "(vec false true false false)"}
+rev_rule! {pi1_fttffftf, "(pi1 (vec (pr false true) (pr true false) (pr false false) (pr true false)))",  "(vec false true false true)"}
+rev_rule! {pi1_fttffftt, "(pi1 (vec (pr false true) (pr true false) (pr false false) (pr true true)))",  "(vec false true false true)"}
+rev_rule! {pi1_fttfftff, "(pi1 (vec (pr false true) (pr true false) (pr false true) (pr false false)))",  "(vec false true false false)"}
+rev_rule! {pi1_fttfftft, "(pi1 (vec (pr false true) (pr true false) (pr false true) (pr false true)))",  "(vec false true false false)"}
+rev_rule! {pi1_fttffttf, "(pi1 (vec (pr false true) (pr true false) (pr false true) (pr true false)))",  "(vec false true false true)"}
+rev_rule! {pi1_fttffttt, "(pi1 (vec (pr false true) (pr true false) (pr false true) (pr true true)))",  "(vec false true false true)"}
+rev_rule! {pi1_fttftfff, "(pi1 (vec (pr false true) (pr true false) (pr true false) (pr false false)))",  "(vec false true true false)"}
+rev_rule! {pi1_fttftfft, "(pi1 (vec (pr false true) (pr true false) (pr true false) (pr false true)))",  "(vec false true true false)"}
+rev_rule! {pi1_fttftftf, "(pi1 (vec (pr false true) (pr true false) (pr true false) (pr true false)))",  "(vec false true true true)"}
+rev_rule! {pi1_fttftftt, "(pi1 (vec (pr false true) (pr true false) (pr true false) (pr true true)))",  "(vec false true true true)"}
+rev_rule! {pi1_fttfttff, "(pi1 (vec (pr false true) (pr true false) (pr true true) (pr false false)))",  "(vec false true true false)"}
+rev_rule! {pi1_fttfttft, "(pi1 (vec (pr false true) (pr true false) (pr true true) (pr false true)))",  "(vec false true true false)"}
+rev_rule! {pi1_fttftttf, "(pi1 (vec (pr false true) (pr true false) (pr true true) (pr true false)))",  "(vec false true true true)"}
+rev_rule! {pi1_fttftttt, "(pi1 (vec (pr false true) (pr true false) (pr true true) (pr true true)))",  "(vec false true true true)"}
+rev_rule! {pi1_ftttffff, "(pi1 (vec (pr false true) (pr true true) (pr false false) (pr false false)))",  "(vec false true false false)"}
+rev_rule! {pi1_ftttffft, "(pi1 (vec (pr false true) (pr true true) (pr false false) (pr false true)))",  "(vec false true false false)"}
+rev_rule! {pi1_ftttfftf, "(pi1 (vec (pr false true) (pr true true) (pr false false) (pr true false)))",  "(vec false true false true)"}
+rev_rule! {pi1_ftttfftt, "(pi1 (vec (pr false true) (pr true true) (pr false false) (pr true true)))",  "(vec false true false true)"}
+rev_rule! {pi1_ftttftff, "(pi1 (vec (pr false true) (pr true true) (pr false true) (pr false false)))",  "(vec false true false false)"}
+rev_rule! {pi1_ftttftft, "(pi1 (vec (pr false true) (pr true true) (pr false true) (pr false true)))",  "(vec false true false false)"}
+rev_rule! {pi1_ftttfttf, "(pi1 (vec (pr false true) (pr true true) (pr false true) (pr true false)))",  "(vec false true false true)"}
+rev_rule! {pi1_ftttfttt, "(pi1 (vec (pr false true) (pr true true) (pr false true) (pr true true)))",  "(vec false true false true)"}
+rev_rule! {pi1_fttttfff, "(pi1 (vec (pr false true) (pr true true) (pr true false) (pr false false)))",  "(vec false true true false)"}
+rev_rule! {pi1_fttttfft, "(pi1 (vec (pr false true) (pr true true) (pr true false) (pr false true)))",  "(vec false true true false)"}
+rev_rule! {pi1_fttttftf, "(pi1 (vec (pr false true) (pr true true) (pr true false) (pr true false)))",  "(vec false true true true)"}
+rev_rule! {pi1_fttttftt, "(pi1 (vec (pr false true) (pr true true) (pr true false) (pr true true)))",  "(vec false true true true)"}
+rev_rule! {pi1_ftttttff, "(pi1 (vec (pr false true) (pr true true) (pr true true) (pr false false)))",  "(vec false true true false)"}
+rev_rule! {pi1_ftttttft, "(pi1 (vec (pr false true) (pr true true) (pr true true) (pr false true)))",  "(vec false true true false)"}
+rev_rule! {pi1_fttttttf, "(pi1 (vec (pr false true) (pr true true) (pr true true) (pr true false)))",  "(vec false true true true)"}
+rev_rule! {pi1_fttttttt, "(pi1 (vec (pr false true) (pr true true) (pr true true) (pr true true)))",  "(vec false true true true)"}
+rev_rule! {pi1_tfffffff, "(pi1 (vec (pr true false) (pr false false) (pr false false) (pr false false)))",  "(vec true false false false)"}
+rev_rule! {pi1_tfffffft, "(pi1 (vec (pr true false) (pr false false) (pr false false) (pr false true)))",  "(vec true false false false)"}
+rev_rule! {pi1_tffffftf, "(pi1 (vec (pr true false) (pr false false) (pr false false) (pr true false)))",  "(vec true false false true)"}
+rev_rule! {pi1_tffffftt, "(pi1 (vec (pr true false) (pr false false) (pr false false) (pr true true)))",  "(vec true false false true)"}
+rev_rule! {pi1_tfffftff, "(pi1 (vec (pr true false) (pr false false) (pr false true) (pr false false)))",  "(vec true false false false)"}
+rev_rule! {pi1_tfffftft, "(pi1 (vec (pr true false) (pr false false) (pr false true) (pr false true)))",  "(vec true false false false)"}
+rev_rule! {pi1_tffffttf, "(pi1 (vec (pr true false) (pr false false) (pr false true) (pr true false)))",  "(vec true false false true)"}
+rev_rule! {pi1_tffffttt, "(pi1 (vec (pr true false) (pr false false) (pr false true) (pr true true)))",  "(vec true false false true)"}
+rev_rule! {pi1_tffftfff, "(pi1 (vec (pr true false) (pr false false) (pr true false) (pr false false)))",  "(vec true false true false)"}
+rev_rule! {pi1_tffftfft, "(pi1 (vec (pr true false) (pr false false) (pr true false) (pr false true)))",  "(vec true false true false)"}
+rev_rule! {pi1_tffftftf, "(pi1 (vec (pr true false) (pr false false) (pr true false) (pr true false)))",  "(vec true false true true)"}
+rev_rule! {pi1_tffftftt, "(pi1 (vec (pr true false) (pr false false) (pr true false) (pr true true)))",  "(vec true false true true)"}
+rev_rule! {pi1_tfffttff, "(pi1 (vec (pr true false) (pr false false) (pr true true) (pr false false)))",  "(vec true false true false)"}
+rev_rule! {pi1_tfffttft, "(pi1 (vec (pr true false) (pr false false) (pr true true) (pr false true)))",  "(vec true false true false)"}
+rev_rule! {pi1_tffftttf, "(pi1 (vec (pr true false) (pr false false) (pr true true) (pr true false)))",  "(vec true false true true)"}
+rev_rule! {pi1_tffftttt, "(pi1 (vec (pr true false) (pr false false) (pr true true) (pr true true)))",  "(vec true false true true)"}
+rev_rule! {pi1_tfftffff, "(pi1 (vec (pr true false) (pr false true) (pr false false) (pr false false)))",  "(vec true false false false)"}
+rev_rule! {pi1_tfftffft, "(pi1 (vec (pr true false) (pr false true) (pr false false) (pr false true)))",  "(vec true false false false)"}
+rev_rule! {pi1_tfftfftf, "(pi1 (vec (pr true false) (pr false true) (pr false false) (pr true false)))",  "(vec true false false true)"}
+rev_rule! {pi1_tfftfftt, "(pi1 (vec (pr true false) (pr false true) (pr false false) (pr true true)))",  "(vec true false false true)"}
+rev_rule! {pi1_tfftftff, "(pi1 (vec (pr true false) (pr false true) (pr false true) (pr false false)))",  "(vec true false false false)"}
+rev_rule! {pi1_tfftftft, "(pi1 (vec (pr true false) (pr false true) (pr false true) (pr false true)))",  "(vec true false false false)"}
+rev_rule! {pi1_tfftfttf, "(pi1 (vec (pr true false) (pr false true) (pr false true) (pr true false)))",  "(vec true false false true)"}
+rev_rule! {pi1_tfftfttt, "(pi1 (vec (pr true false) (pr false true) (pr false true) (pr true true)))",  "(vec true false false true)"}
+rev_rule! {pi1_tffttfff, "(pi1 (vec (pr true false) (pr false true) (pr true false) (pr false false)))",  "(vec true false true false)"}
+rev_rule! {pi1_tffttfft, "(pi1 (vec (pr true false) (pr false true) (pr true false) (pr false true)))",  "(vec true false true false)"}
+rev_rule! {pi1_tffttftf, "(pi1 (vec (pr true false) (pr false true) (pr true false) (pr true false)))",  "(vec true false true true)"}
+rev_rule! {pi1_tffttftt, "(pi1 (vec (pr true false) (pr false true) (pr true false) (pr true true)))",  "(vec true false true true)"}
+rev_rule! {pi1_tfftttff, "(pi1 (vec (pr true false) (pr false true) (pr true true) (pr false false)))",  "(vec true false true false)"}
+rev_rule! {pi1_tfftttft, "(pi1 (vec (pr true false) (pr false true) (pr true true) (pr false true)))",  "(vec true false true false)"}
+rev_rule! {pi1_tffttttf, "(pi1 (vec (pr true false) (pr false true) (pr true true) (pr true false)))",  "(vec true false true true)"}
+rev_rule! {pi1_tffttttt, "(pi1 (vec (pr true false) (pr false true) (pr true true) (pr true true)))",  "(vec true false true true)"}
+rev_rule! {pi1_tftfffff, "(pi1 (vec (pr true false) (pr true false) (pr false false) (pr false false)))",  "(vec true true false false)"}
+rev_rule! {pi1_tftfffft, "(pi1 (vec (pr true false) (pr true false) (pr false false) (pr false true)))",  "(vec true true false false)"}
+rev_rule! {pi1_tftffftf, "(pi1 (vec (pr true false) (pr true false) (pr false false) (pr true false)))",  "(vec true true false true)"}
+rev_rule! {pi1_tftffftt, "(pi1 (vec (pr true false) (pr true false) (pr false false) (pr true true)))",  "(vec true true false true)"}
+rev_rule! {pi1_tftfftff, "(pi1 (vec (pr true false) (pr true false) (pr false true) (pr false false)))",  "(vec true true false false)"}
+rev_rule! {pi1_tftfftft, "(pi1 (vec (pr true false) (pr true false) (pr false true) (pr false true)))",  "(vec true true false false)"}
+rev_rule! {pi1_tftffttf, "(pi1 (vec (pr true false) (pr true false) (pr false true) (pr true false)))",  "(vec true true false true)"}
+rev_rule! {pi1_tftffttt, "(pi1 (vec (pr true false) (pr true false) (pr false true) (pr true true)))",  "(vec true true false true)"}
+rev_rule! {pi1_tftftfff, "(pi1 (vec (pr true false) (pr true false) (pr true false) (pr false false)))",  "(vec true true true false)"}
+rev_rule! {pi1_tftftfft, "(pi1 (vec (pr true false) (pr true false) (pr true false) (pr false true)))",  "(vec true true true false)"}
+rev_rule! {pi1_tftftftf, "(pi1 (vec (pr true false) (pr true false) (pr true false) (pr true false)))",  "(vec true true true true)"}
+rev_rule! {pi1_tftftftt, "(pi1 (vec (pr true false) (pr true false) (pr true false) (pr true true)))",  "(vec true true true true)"}
+rev_rule! {pi1_tftfttff, "(pi1 (vec (pr true false) (pr true false) (pr true true) (pr false false)))",  "(vec true true true false)"}
+rev_rule! {pi1_tftfttft, "(pi1 (vec (pr true false) (pr true false) (pr true true) (pr false true)))",  "(vec true true true false)"}
+rev_rule! {pi1_tftftttf, "(pi1 (vec (pr true false) (pr true false) (pr true true) (pr true false)))",  "(vec true true true true)"}
+rev_rule! {pi1_tftftttt, "(pi1 (vec (pr true false) (pr true false) (pr true true) (pr true true)))",  "(vec true true true true)"}
+rev_rule! {pi1_tfttffff, "(pi1 (vec (pr true false) (pr true true) (pr false false) (pr false false)))",  "(vec true true false false)"}
+rev_rule! {pi1_tfttffft, "(pi1 (vec (pr true false) (pr true true) (pr false false) (pr false true)))",  "(vec true true false false)"}
+rev_rule! {pi1_tfttfftf, "(pi1 (vec (pr true false) (pr true true) (pr false false) (pr true false)))",  "(vec true true false true)"}
+rev_rule! {pi1_tfttfftt, "(pi1 (vec (pr true false) (pr true true) (pr false false) (pr true true)))",  "(vec true true false true)"}
+rev_rule! {pi1_tfttftff, "(pi1 (vec (pr true false) (pr true true) (pr false true) (pr false false)))",  "(vec true true false false)"}
+rev_rule! {pi1_tfttftft, "(pi1 (vec (pr true false) (pr true true) (pr false true) (pr false true)))",  "(vec true true false false)"}
+rev_rule! {pi1_tfttfttf, "(pi1 (vec (pr true false) (pr true true) (pr false true) (pr true false)))",  "(vec true true false true)"}
+rev_rule! {pi1_tfttfttt, "(pi1 (vec (pr true false) (pr true true) (pr false true) (pr true true)))",  "(vec true true false true)"}
+rev_rule! {pi1_tftttfff, "(pi1 (vec (pr true false) (pr true true) (pr true false) (pr false false)))",  "(vec true true true false)"}
+rev_rule! {pi1_tftttfft, "(pi1 (vec (pr true false) (pr true true) (pr true false) (pr false true)))",  "(vec true true true false)"}
+rev_rule! {pi1_tftttftf, "(pi1 (vec (pr true false) (pr true true) (pr true false) (pr true false)))",  "(vec true true true true)"}
+rev_rule! {pi1_tftttftt, "(pi1 (vec (pr true false) (pr true true) (pr true false) (pr true true)))",  "(vec true true true true)"}
+rev_rule! {pi1_tfttttff, "(pi1 (vec (pr true false) (pr true true) (pr true true) (pr false false)))",  "(vec true true true false)"}
+rev_rule! {pi1_tfttttft, "(pi1 (vec (pr true false) (pr true true) (pr true true) (pr false true)))",  "(vec true true true false)"}
+rev_rule! {pi1_tftttttf, "(pi1 (vec (pr true false) (pr true true) (pr true true) (pr true false)))",  "(vec true true true true)"}
+rev_rule! {pi1_tftttttt, "(pi1 (vec (pr true false) (pr true true) (pr true true) (pr true true)))",  "(vec true true true true)"}
+rev_rule! {pi1_ttffffff, "(pi1 (vec (pr true true) (pr false false) (pr false false) (pr false false)))",  "(vec true false false false)"}
+rev_rule! {pi1_ttffffft, "(pi1 (vec (pr true true) (pr false false) (pr false false) (pr false true)))",  "(vec true false false false)"}
+rev_rule! {pi1_ttfffftf, "(pi1 (vec (pr true true) (pr false false) (pr false false) (pr true false)))",  "(vec true false false true)"}
+rev_rule! {pi1_ttfffftt, "(pi1 (vec (pr true true) (pr false false) (pr false false) (pr true true)))",  "(vec true false false true)"}
+rev_rule! {pi1_ttffftff, "(pi1 (vec (pr true true) (pr false false) (pr false true) (pr false false)))",  "(vec true false false false)"}
+rev_rule! {pi1_ttffftft, "(pi1 (vec (pr true true) (pr false false) (pr false true) (pr false true)))",  "(vec true false false false)"}
+rev_rule! {pi1_ttfffttf, "(pi1 (vec (pr true true) (pr false false) (pr false true) (pr true false)))",  "(vec true false false true)"}
+rev_rule! {pi1_ttfffttt, "(pi1 (vec (pr true true) (pr false false) (pr false true) (pr true true)))",  "(vec true false false true)"}
+rev_rule! {pi1_ttfftfff, "(pi1 (vec (pr true true) (pr false false) (pr true false) (pr false false)))",  "(vec true false true false)"}
+rev_rule! {pi1_ttfftfft, "(pi1 (vec (pr true true) (pr false false) (pr true false) (pr false true)))",  "(vec true false true false)"}
+rev_rule! {pi1_ttfftftf, "(pi1 (vec (pr true true) (pr false false) (pr true false) (pr true false)))",  "(vec true false true true)"}
+rev_rule! {pi1_ttfftftt, "(pi1 (vec (pr true true) (pr false false) (pr true false) (pr true true)))",  "(vec true false true true)"}
+rev_rule! {pi1_ttffttff, "(pi1 (vec (pr true true) (pr false false) (pr true true) (pr false false)))",  "(vec true false true false)"}
+rev_rule! {pi1_ttffttft, "(pi1 (vec (pr true true) (pr false false) (pr true true) (pr false true)))",  "(vec true false true false)"}
+rev_rule! {pi1_ttfftttf, "(pi1 (vec (pr true true) (pr false false) (pr true true) (pr true false)))",  "(vec true false true true)"}
+rev_rule! {pi1_ttfftttt, "(pi1 (vec (pr true true) (pr false false) (pr true true) (pr true true)))",  "(vec true false true true)"}
+rev_rule! {pi1_ttftffff, "(pi1 (vec (pr true true) (pr false true) (pr false false) (pr false false)))",  "(vec true false false false)"}
+rev_rule! {pi1_ttftffft, "(pi1 (vec (pr true true) (pr false true) (pr false false) (pr false true)))",  "(vec true false false false)"}
+rev_rule! {pi1_ttftfftf, "(pi1 (vec (pr true true) (pr false true) (pr false false) (pr true false)))",  "(vec true false false true)"}
+rev_rule! {pi1_ttftfftt, "(pi1 (vec (pr true true) (pr false true) (pr false false) (pr true true)))",  "(vec true false false true)"}
+rev_rule! {pi1_ttftftff, "(pi1 (vec (pr true true) (pr false true) (pr false true) (pr false false)))",  "(vec true false false false)"}
+rev_rule! {pi1_ttftftft, "(pi1 (vec (pr true true) (pr false true) (pr false true) (pr false true)))",  "(vec true false false false)"}
+rev_rule! {pi1_ttftfttf, "(pi1 (vec (pr true true) (pr false true) (pr false true) (pr true false)))",  "(vec true false false true)"}
+rev_rule! {pi1_ttftfttt, "(pi1 (vec (pr true true) (pr false true) (pr false true) (pr true true)))",  "(vec true false false true)"}
+rev_rule! {pi1_ttfttfff, "(pi1 (vec (pr true true) (pr false true) (pr true false) (pr false false)))",  "(vec true false true false)"}
+rev_rule! {pi1_ttfttfft, "(pi1 (vec (pr true true) (pr false true) (pr true false) (pr false true)))",  "(vec true false true false)"}
+rev_rule! {pi1_ttfttftf, "(pi1 (vec (pr true true) (pr false true) (pr true false) (pr true false)))",  "(vec true false true true)"}
+rev_rule! {pi1_ttfttftt, "(pi1 (vec (pr true true) (pr false true) (pr true false) (pr true true)))",  "(vec true false true true)"}
+rev_rule! {pi1_ttftttff, "(pi1 (vec (pr true true) (pr false true) (pr true true) (pr false false)))",  "(vec true false true false)"}
+rev_rule! {pi1_ttftttft, "(pi1 (vec (pr true true) (pr false true) (pr true true) (pr false true)))",  "(vec true false true false)"}
+rev_rule! {pi1_ttfttttf, "(pi1 (vec (pr true true) (pr false true) (pr true true) (pr true false)))",  "(vec true false true true)"}
+rev_rule! {pi1_ttfttttt, "(pi1 (vec (pr true true) (pr false true) (pr true true) (pr true true)))",  "(vec true false true true)"}
+rev_rule! {pi1_tttfffff, "(pi1 (vec (pr true true) (pr true false) (pr false false) (pr false false)))",  "(vec true true false false)"}
+rev_rule! {pi1_tttfffft, "(pi1 (vec (pr true true) (pr true false) (pr false false) (pr false true)))",  "(vec true true false false)"}
+rev_rule! {pi1_tttffftf, "(pi1 (vec (pr true true) (pr true false) (pr false false) (pr true false)))",  "(vec true true false true)"}
+rev_rule! {pi1_tttffftt, "(pi1 (vec (pr true true) (pr true false) (pr false false) (pr true true)))",  "(vec true true false true)"}
+rev_rule! {pi1_tttfftff, "(pi1 (vec (pr true true) (pr true false) (pr false true) (pr false false)))",  "(vec true true false false)"}
+rev_rule! {pi1_tttfftft, "(pi1 (vec (pr true true) (pr true false) (pr false true) (pr false true)))",  "(vec true true false false)"}
+rev_rule! {pi1_tttffttf, "(pi1 (vec (pr true true) (pr true false) (pr false true) (pr true false)))",  "(vec true true false true)"}
+rev_rule! {pi1_tttffttt, "(pi1 (vec (pr true true) (pr true false) (pr false true) (pr true true)))",  "(vec true true false true)"}
+rev_rule! {pi1_tttftfff, "(pi1 (vec (pr true true) (pr true false) (pr true false) (pr false false)))",  "(vec true true true false)"}
+rev_rule! {pi1_tttftfft, "(pi1 (vec (pr true true) (pr true false) (pr true false) (pr false true)))",  "(vec true true true false)"}
+rev_rule! {pi1_tttftftf, "(pi1 (vec (pr true true) (pr true false) (pr true false) (pr true false)))",  "(vec true true true true)"}
+rev_rule! {pi1_tttftftt, "(pi1 (vec (pr true true) (pr true false) (pr true false) (pr true true)))",  "(vec true true true true)"}
+rev_rule! {pi1_tttfttff, "(pi1 (vec (pr true true) (pr true false) (pr true true) (pr false false)))",  "(vec true true true false)"}
+rev_rule! {pi1_tttfttft, "(pi1 (vec (pr true true) (pr true false) (pr true true) (pr false true)))",  "(vec true true true false)"}
+rev_rule! {pi1_tttftttf, "(pi1 (vec (pr true true) (pr true false) (pr true true) (pr true false)))",  "(vec true true true true)"}
+rev_rule! {pi1_tttftttt, "(pi1 (vec (pr true true) (pr true false) (pr true true) (pr true true)))",  "(vec true true true true)"}
+rev_rule! {pi1_ttttffff, "(pi1 (vec (pr true true) (pr true true) (pr false false) (pr false false)))",  "(vec true true false false)"}
+rev_rule! {pi1_ttttffft, "(pi1 (vec (pr true true) (pr true true) (pr false false) (pr false true)))",  "(vec true true false false)"}
+rev_rule! {pi1_ttttfftf, "(pi1 (vec (pr true true) (pr true true) (pr false false) (pr true false)))",  "(vec true true false true)"}
+rev_rule! {pi1_ttttfftt, "(pi1 (vec (pr true true) (pr true true) (pr false false) (pr true true)))",  "(vec true true false true)"}
+rev_rule! {pi1_ttttftff, "(pi1 (vec (pr true true) (pr true true) (pr false true) (pr false false)))",  "(vec true true false false)"}
+rev_rule! {pi1_ttttftft, "(pi1 (vec (pr true true) (pr true true) (pr false true) (pr false true)))",  "(vec true true false false)"}
+rev_rule! {pi1_ttttfttf, "(pi1 (vec (pr true true) (pr true true) (pr false true) (pr true false)))",  "(vec true true false true)"}
+rev_rule! {pi1_ttttfttt, "(pi1 (vec (pr true true) (pr true true) (pr false true) (pr true true)))",  "(vec true true false true)"}
+rev_rule! {pi1_tttttfff, "(pi1 (vec (pr true true) (pr true true) (pr true false) (pr false false)))",  "(vec true true true false)"}
+rev_rule! {pi1_tttttfft, "(pi1 (vec (pr true true) (pr true true) (pr true false) (pr false true)))",  "(vec true true true false)"}
+rev_rule! {pi1_tttttftf, "(pi1 (vec (pr true true) (pr true true) (pr true false) (pr true false)))",  "(vec true true true true)"}
+rev_rule! {pi1_tttttftt, "(pi1 (vec (pr true true) (pr true true) (pr true false) (pr true true)))",  "(vec true true true true)"}
+rev_rule! {pi1_ttttttff, "(pi1 (vec (pr true true) (pr true true) (pr true true) (pr false false)))",  "(vec true true true false)"}
+rev_rule! {pi1_ttttttft, "(pi1 (vec (pr true true) (pr true true) (pr true true) (pr false true)))",  "(vec true true true false)"}
+rev_rule! {pi1_tttttttf, "(pi1 (vec (pr true true) (pr true true) (pr true true) (pr true false)))",  "(vec true true true true)"}
+rev_rule! {pi1_tttttttt, "(pi1 (vec (pr true true) (pr true true) (pr true true) (pr true true)))",  "(vec true true true true)"}
+
+rev_rule! {pi2_ffffffff, "(pi2 (vec (pr false false) (pr false false) (pr false false) (pr false false)))",  "(vec false false false false)"}
+rev_rule! {pi2_ffffffft, "(pi2 (vec (pr false false) (pr false false) (pr false false) (pr false true)))",  "(vec false false false true)"}
+rev_rule! {pi2_fffffftf, "(pi2 (vec (pr false false) (pr false false) (pr false false) (pr true false)))",  "(vec false false false false)"}
+rev_rule! {pi2_fffffftt, "(pi2 (vec (pr false false) (pr false false) (pr false false) (pr true true)))",  "(vec false false false true)"}
+rev_rule! {pi2_ffffftff, "(pi2 (vec (pr false false) (pr false false) (pr false true) (pr false false)))",  "(vec false false true false)"}
+rev_rule! {pi2_ffffftft, "(pi2 (vec (pr false false) (pr false false) (pr false true) (pr false true)))",  "(vec false false true true)"}
+rev_rule! {pi2_fffffttf, "(pi2 (vec (pr false false) (pr false false) (pr false true) (pr true false)))",  "(vec false false true false)"}
+rev_rule! {pi2_fffffttt, "(pi2 (vec (pr false false) (pr false false) (pr false true) (pr true true)))",  "(vec false false true true)"}
+rev_rule! {pi2_fffftfff, "(pi2 (vec (pr false false) (pr false false) (pr true false) (pr false false)))",  "(vec false false false false)"}
+rev_rule! {pi2_fffftfft, "(pi2 (vec (pr false false) (pr false false) (pr true false) (pr false true)))",  "(vec false false false true)"}
+rev_rule! {pi2_fffftftf, "(pi2 (vec (pr false false) (pr false false) (pr true false) (pr true false)))",  "(vec false false false false)"}
+rev_rule! {pi2_fffftftt, "(pi2 (vec (pr false false) (pr false false) (pr true false) (pr true true)))",  "(vec false false false true)"}
+rev_rule! {pi2_ffffttff, "(pi2 (vec (pr false false) (pr false false) (pr true true) (pr false false)))",  "(vec false false true false)"}
+rev_rule! {pi2_ffffttft, "(pi2 (vec (pr false false) (pr false false) (pr true true) (pr false true)))",  "(vec false false true true)"}
+rev_rule! {pi2_fffftttf, "(pi2 (vec (pr false false) (pr false false) (pr true true) (pr true false)))",  "(vec false false true false)"}
+rev_rule! {pi2_fffftttt, "(pi2 (vec (pr false false) (pr false false) (pr true true) (pr true true)))",  "(vec false false true true)"}
+rev_rule! {pi2_ffftffff, "(pi2 (vec (pr false false) (pr false true) (pr false false) (pr false false)))",  "(vec false true false false)"}
+rev_rule! {pi2_ffftffft, "(pi2 (vec (pr false false) (pr false true) (pr false false) (pr false true)))",  "(vec false true false true)"}
+rev_rule! {pi2_ffftfftf, "(pi2 (vec (pr false false) (pr false true) (pr false false) (pr true false)))",  "(vec false true false false)"}
+rev_rule! {pi2_ffftfftt, "(pi2 (vec (pr false false) (pr false true) (pr false false) (pr true true)))",  "(vec false true false true)"}
+rev_rule! {pi2_ffftftff, "(pi2 (vec (pr false false) (pr false true) (pr false true) (pr false false)))",  "(vec false true true false)"}
+rev_rule! {pi2_ffftftft, "(pi2 (vec (pr false false) (pr false true) (pr false true) (pr false true)))",  "(vec false true true true)"}
+rev_rule! {pi2_ffftfttf, "(pi2 (vec (pr false false) (pr false true) (pr false true) (pr true false)))",  "(vec false true true false)"}
+rev_rule! {pi2_ffftfttt, "(pi2 (vec (pr false false) (pr false true) (pr false true) (pr true true)))",  "(vec false true true true)"}
+rev_rule! {pi2_fffttfff, "(pi2 (vec (pr false false) (pr false true) (pr true false) (pr false false)))",  "(vec false true false false)"}
+rev_rule! {pi2_fffttfft, "(pi2 (vec (pr false false) (pr false true) (pr true false) (pr false true)))",  "(vec false true false true)"}
+rev_rule! {pi2_fffttftf, "(pi2 (vec (pr false false) (pr false true) (pr true false) (pr true false)))",  "(vec false true false false)"}
+rev_rule! {pi2_fffttftt, "(pi2 (vec (pr false false) (pr false true) (pr true false) (pr true true)))",  "(vec false true false true)"}
+rev_rule! {pi2_ffftttff, "(pi2 (vec (pr false false) (pr false true) (pr true true) (pr false false)))",  "(vec false true true false)"}
+rev_rule! {pi2_ffftttft, "(pi2 (vec (pr false false) (pr false true) (pr true true) (pr false true)))",  "(vec false true true true)"}
+rev_rule! {pi2_fffttttf, "(pi2 (vec (pr false false) (pr false true) (pr true true) (pr true false)))",  "(vec false true true false)"}
+rev_rule! {pi2_fffttttt, "(pi2 (vec (pr false false) (pr false true) (pr true true) (pr true true)))",  "(vec false true true true)"}
+rev_rule! {pi2_fftfffff, "(pi2 (vec (pr false false) (pr true false) (pr false false) (pr false false)))",  "(vec false false false false)"}
+rev_rule! {pi2_fftfffft, "(pi2 (vec (pr false false) (pr true false) (pr false false) (pr false true)))",  "(vec false false false true)"}
+rev_rule! {pi2_fftffftf, "(pi2 (vec (pr false false) (pr true false) (pr false false) (pr true false)))",  "(vec false false false false)"}
+rev_rule! {pi2_fftffftt, "(pi2 (vec (pr false false) (pr true false) (pr false false) (pr true true)))",  "(vec false false false true)"}
+rev_rule! {pi2_fftfftff, "(pi2 (vec (pr false false) (pr true false) (pr false true) (pr false false)))",  "(vec false false true false)"}
+rev_rule! {pi2_fftfftft, "(pi2 (vec (pr false false) (pr true false) (pr false true) (pr false true)))",  "(vec false false true true)"}
+rev_rule! {pi2_fftffttf, "(pi2 (vec (pr false false) (pr true false) (pr false true) (pr true false)))",  "(vec false false true false)"}
+rev_rule! {pi2_fftffttt, "(pi2 (vec (pr false false) (pr true false) (pr false true) (pr true true)))",  "(vec false false true true)"}
+rev_rule! {pi2_fftftfff, "(pi2 (vec (pr false false) (pr true false) (pr true false) (pr false false)))",  "(vec false false false false)"}
+rev_rule! {pi2_fftftfft, "(pi2 (vec (pr false false) (pr true false) (pr true false) (pr false true)))",  "(vec false false false true)"}
+rev_rule! {pi2_fftftftf, "(pi2 (vec (pr false false) (pr true false) (pr true false) (pr true false)))",  "(vec false false false false)"}
+rev_rule! {pi2_fftftftt, "(pi2 (vec (pr false false) (pr true false) (pr true false) (pr true true)))",  "(vec false false false true)"}
+rev_rule! {pi2_fftfttff, "(pi2 (vec (pr false false) (pr true false) (pr true true) (pr false false)))",  "(vec false false true false)"}
+rev_rule! {pi2_fftfttft, "(pi2 (vec (pr false false) (pr true false) (pr true true) (pr false true)))",  "(vec false false true true)"}
+rev_rule! {pi2_fftftttf, "(pi2 (vec (pr false false) (pr true false) (pr true true) (pr true false)))",  "(vec false false true false)"}
+rev_rule! {pi2_fftftttt, "(pi2 (vec (pr false false) (pr true false) (pr true true) (pr true true)))",  "(vec false false true true)"}
+rev_rule! {pi2_ffttffff, "(pi2 (vec (pr false false) (pr true true) (pr false false) (pr false false)))",  "(vec false true false false)"}
+rev_rule! {pi2_ffttffft, "(pi2 (vec (pr false false) (pr true true) (pr false false) (pr false true)))",  "(vec false true false true)"}
+rev_rule! {pi2_ffttfftf, "(pi2 (vec (pr false false) (pr true true) (pr false false) (pr true false)))",  "(vec false true false false)"}
+rev_rule! {pi2_ffttfftt, "(pi2 (vec (pr false false) (pr true true) (pr false false) (pr true true)))",  "(vec false true false true)"}
+rev_rule! {pi2_ffttftff, "(pi2 (vec (pr false false) (pr true true) (pr false true) (pr false false)))",  "(vec false true true false)"}
+rev_rule! {pi2_ffttftft, "(pi2 (vec (pr false false) (pr true true) (pr false true) (pr false true)))",  "(vec false true true true)"}
+rev_rule! {pi2_ffttfttf, "(pi2 (vec (pr false false) (pr true true) (pr false true) (pr true false)))",  "(vec false true true false)"}
+rev_rule! {pi2_ffttfttt, "(pi2 (vec (pr false false) (pr true true) (pr false true) (pr true true)))",  "(vec false true true true)"}
+rev_rule! {pi2_fftttfff, "(pi2 (vec (pr false false) (pr true true) (pr true false) (pr false false)))",  "(vec false true false false)"}
+rev_rule! {pi2_fftttfft, "(pi2 (vec (pr false false) (pr true true) (pr true false) (pr false true)))",  "(vec false true false true)"}
+rev_rule! {pi2_fftttftf, "(pi2 (vec (pr false false) (pr true true) (pr true false) (pr true false)))",  "(vec false true false false)"}
+rev_rule! {pi2_fftttftt, "(pi2 (vec (pr false false) (pr true true) (pr true false) (pr true true)))",  "(vec false true false true)"}
+rev_rule! {pi2_ffttttff, "(pi2 (vec (pr false false) (pr true true) (pr true true) (pr false false)))",  "(vec false true true false)"}
+rev_rule! {pi2_ffttttft, "(pi2 (vec (pr false false) (pr true true) (pr true true) (pr false true)))",  "(vec false true true true)"}
+rev_rule! {pi2_fftttttf, "(pi2 (vec (pr false false) (pr true true) (pr true true) (pr true false)))",  "(vec false true true false)"}
+rev_rule! {pi2_fftttttt, "(pi2 (vec (pr false false) (pr true true) (pr true true) (pr true true)))",  "(vec false true true true)"}
+rev_rule! {pi2_ftffffff, "(pi2 (vec (pr false true) (pr false false) (pr false false) (pr false false)))",  "(vec true false false false)"}
+rev_rule! {pi2_ftffffft, "(pi2 (vec (pr false true) (pr false false) (pr false false) (pr false true)))",  "(vec true false false true)"}
+rev_rule! {pi2_ftfffftf, "(pi2 (vec (pr false true) (pr false false) (pr false false) (pr true false)))",  "(vec true false false false)"}
+rev_rule! {pi2_ftfffftt, "(pi2 (vec (pr false true) (pr false false) (pr false false) (pr true true)))",  "(vec true false false true)"}
+rev_rule! {pi2_ftffftff, "(pi2 (vec (pr false true) (pr false false) (pr false true) (pr false false)))",  "(vec true false true false)"}
+rev_rule! {pi2_ftffftft, "(pi2 (vec (pr false true) (pr false false) (pr false true) (pr false true)))",  "(vec true false true true)"}
+rev_rule! {pi2_ftfffttf, "(pi2 (vec (pr false true) (pr false false) (pr false true) (pr true false)))",  "(vec true false true false)"}
+rev_rule! {pi2_ftfffttt, "(pi2 (vec (pr false true) (pr false false) (pr false true) (pr true true)))",  "(vec true false true true)"}
+rev_rule! {pi2_ftfftfff, "(pi2 (vec (pr false true) (pr false false) (pr true false) (pr false false)))",  "(vec true false false false)"}
+rev_rule! {pi2_ftfftfft, "(pi2 (vec (pr false true) (pr false false) (pr true false) (pr false true)))",  "(vec true false false true)"}
+rev_rule! {pi2_ftfftftf, "(pi2 (vec (pr false true) (pr false false) (pr true false) (pr true false)))",  "(vec true false false false)"}
+rev_rule! {pi2_ftfftftt, "(pi2 (vec (pr false true) (pr false false) (pr true false) (pr true true)))",  "(vec true false false true)"}
+rev_rule! {pi2_ftffttff, "(pi2 (vec (pr false true) (pr false false) (pr true true) (pr false false)))",  "(vec true false true false)"}
+rev_rule! {pi2_ftffttft, "(pi2 (vec (pr false true) (pr false false) (pr true true) (pr false true)))",  "(vec true false true true)"}
+rev_rule! {pi2_ftfftttf, "(pi2 (vec (pr false true) (pr false false) (pr true true) (pr true false)))",  "(vec true false true false)"}
+rev_rule! {pi2_ftfftttt, "(pi2 (vec (pr false true) (pr false false) (pr true true) (pr true true)))",  "(vec true false true true)"}
+rev_rule! {pi2_ftftffff, "(pi2 (vec (pr false true) (pr false true) (pr false false) (pr false false)))",  "(vec true true false false)"}
+rev_rule! {pi2_ftftffft, "(pi2 (vec (pr false true) (pr false true) (pr false false) (pr false true)))",  "(vec true true false true)"}
+rev_rule! {pi2_ftftfftf, "(pi2 (vec (pr false true) (pr false true) (pr false false) (pr true false)))",  "(vec true true false false)"}
+rev_rule! {pi2_ftftfftt, "(pi2 (vec (pr false true) (pr false true) (pr false false) (pr true true)))",  "(vec true true false true)"}
+rev_rule! {pi2_ftftftff, "(pi2 (vec (pr false true) (pr false true) (pr false true) (pr false false)))",  "(vec true true true false)"}
+rev_rule! {pi2_ftftftft, "(pi2 (vec (pr false true) (pr false true) (pr false true) (pr false true)))",  "(vec true true true true)"}
+rev_rule! {pi2_ftftfttf, "(pi2 (vec (pr false true) (pr false true) (pr false true) (pr true false)))",  "(vec true true true false)"}
+rev_rule! {pi2_ftftfttt, "(pi2 (vec (pr false true) (pr false true) (pr false true) (pr true true)))",  "(vec true true true true)"}
+rev_rule! {pi2_ftfttfff, "(pi2 (vec (pr false true) (pr false true) (pr true false) (pr false false)))",  "(vec true true false false)"}
+rev_rule! {pi2_ftfttfft, "(pi2 (vec (pr false true) (pr false true) (pr true false) (pr false true)))",  "(vec true true false true)"}
+rev_rule! {pi2_ftfttftf, "(pi2 (vec (pr false true) (pr false true) (pr true false) (pr true false)))",  "(vec true true false false)"}
+rev_rule! {pi2_ftfttftt, "(pi2 (vec (pr false true) (pr false true) (pr true false) (pr true true)))",  "(vec true true false true)"}
+rev_rule! {pi2_ftftttff, "(pi2 (vec (pr false true) (pr false true) (pr true true) (pr false false)))",  "(vec true true true false)"}
+rev_rule! {pi2_ftftttft, "(pi2 (vec (pr false true) (pr false true) (pr true true) (pr false true)))",  "(vec true true true true)"}
+rev_rule! {pi2_ftfttttf, "(pi2 (vec (pr false true) (pr false true) (pr true true) (pr true false)))",  "(vec true true true false)"}
+rev_rule! {pi2_ftfttttt, "(pi2 (vec (pr false true) (pr false true) (pr true true) (pr true true)))",  "(vec true true true true)"}
+rev_rule! {pi2_fttfffff, "(pi2 (vec (pr false true) (pr true false) (pr false false) (pr false false)))",  "(vec true false false false)"}
+rev_rule! {pi2_fttfffft, "(pi2 (vec (pr false true) (pr true false) (pr false false) (pr false true)))",  "(vec true false false true)"}
+rev_rule! {pi2_fttffftf, "(pi2 (vec (pr false true) (pr true false) (pr false false) (pr true false)))",  "(vec true false false false)"}
+rev_rule! {pi2_fttffftt, "(pi2 (vec (pr false true) (pr true false) (pr false false) (pr true true)))",  "(vec true false false true)"}
+rev_rule! {pi2_fttfftff, "(pi2 (vec (pr false true) (pr true false) (pr false true) (pr false false)))",  "(vec true false true false)"}
+rev_rule! {pi2_fttfftft, "(pi2 (vec (pr false true) (pr true false) (pr false true) (pr false true)))",  "(vec true false true true)"}
+rev_rule! {pi2_fttffttf, "(pi2 (vec (pr false true) (pr true false) (pr false true) (pr true false)))",  "(vec true false true false)"}
+rev_rule! {pi2_fttffttt, "(pi2 (vec (pr false true) (pr true false) (pr false true) (pr true true)))",  "(vec true false true true)"}
+rev_rule! {pi2_fttftfff, "(pi2 (vec (pr false true) (pr true false) (pr true false) (pr false false)))",  "(vec true false false false)"}
+rev_rule! {pi2_fttftfft, "(pi2 (vec (pr false true) (pr true false) (pr true false) (pr false true)))",  "(vec true false false true)"}
+rev_rule! {pi2_fttftftf, "(pi2 (vec (pr false true) (pr true false) (pr true false) (pr true false)))",  "(vec true false false false)"}
+rev_rule! {pi2_fttftftt, "(pi2 (vec (pr false true) (pr true false) (pr true false) (pr true true)))",  "(vec true false false true)"}
+rev_rule! {pi2_fttfttff, "(pi2 (vec (pr false true) (pr true false) (pr true true) (pr false false)))",  "(vec true false true false)"}
+rev_rule! {pi2_fttfttft, "(pi2 (vec (pr false true) (pr true false) (pr true true) (pr false true)))",  "(vec true false true true)"}
+rev_rule! {pi2_fttftttf, "(pi2 (vec (pr false true) (pr true false) (pr true true) (pr true false)))",  "(vec true false true false)"}
+rev_rule! {pi2_fttftttt, "(pi2 (vec (pr false true) (pr true false) (pr true true) (pr true true)))",  "(vec true false true true)"}
+rev_rule! {pi2_ftttffff, "(pi2 (vec (pr false true) (pr true true) (pr false false) (pr false false)))",  "(vec true true false false)"}
+rev_rule! {pi2_ftttffft, "(pi2 (vec (pr false true) (pr true true) (pr false false) (pr false true)))",  "(vec true true false true)"}
+rev_rule! {pi2_ftttfftf, "(pi2 (vec (pr false true) (pr true true) (pr false false) (pr true false)))",  "(vec true true false false)"}
+rev_rule! {pi2_ftttfftt, "(pi2 (vec (pr false true) (pr true true) (pr false false) (pr true true)))",  "(vec true true false true)"}
+rev_rule! {pi2_ftttftff, "(pi2 (vec (pr false true) (pr true true) (pr false true) (pr false false)))",  "(vec true true true false)"}
+rev_rule! {pi2_ftttftft, "(pi2 (vec (pr false true) (pr true true) (pr false true) (pr false true)))",  "(vec true true true true)"}
+rev_rule! {pi2_ftttfttf, "(pi2 (vec (pr false true) (pr true true) (pr false true) (pr true false)))",  "(vec true true true false)"}
+rev_rule! {pi2_ftttfttt, "(pi2 (vec (pr false true) (pr true true) (pr false true) (pr true true)))",  "(vec true true true true)"}
+rev_rule! {pi2_fttttfff, "(pi2 (vec (pr false true) (pr true true) (pr true false) (pr false false)))",  "(vec true true false false)"}
+rev_rule! {pi2_fttttfft, "(pi2 (vec (pr false true) (pr true true) (pr true false) (pr false true)))",  "(vec true true false true)"}
+rev_rule! {pi2_fttttftf, "(pi2 (vec (pr false true) (pr true true) (pr true false) (pr true false)))",  "(vec true true false false)"}
+rev_rule! {pi2_fttttftt, "(pi2 (vec (pr false true) (pr true true) (pr true false) (pr true true)))",  "(vec true true false true)"}
+rev_rule! {pi2_ftttttff, "(pi2 (vec (pr false true) (pr true true) (pr true true) (pr false false)))",  "(vec true true true false)"}
+rev_rule! {pi2_ftttttft, "(pi2 (vec (pr false true) (pr true true) (pr true true) (pr false true)))",  "(vec true true true true)"}
+rev_rule! {pi2_fttttttf, "(pi2 (vec (pr false true) (pr true true) (pr true true) (pr true false)))",  "(vec true true true false)"}
+rev_rule! {pi2_fttttttt, "(pi2 (vec (pr false true) (pr true true) (pr true true) (pr true true)))",  "(vec true true true true)"}
+rev_rule! {pi2_tfffffff, "(pi2 (vec (pr true false) (pr false false) (pr false false) (pr false false)))",  "(vec false false false false)"}
+rev_rule! {pi2_tfffffft, "(pi2 (vec (pr true false) (pr false false) (pr false false) (pr false true)))",  "(vec false false false true)"}
+rev_rule! {pi2_tffffftf, "(pi2 (vec (pr true false) (pr false false) (pr false false) (pr true false)))",  "(vec false false false false)"}
+rev_rule! {pi2_tffffftt, "(pi2 (vec (pr true false) (pr false false) (pr false false) (pr true true)))",  "(vec false false false true)"}
+rev_rule! {pi2_tfffftff, "(pi2 (vec (pr true false) (pr false false) (pr false true) (pr false false)))",  "(vec false false true false)"}
+rev_rule! {pi2_tfffftft, "(pi2 (vec (pr true false) (pr false false) (pr false true) (pr false true)))",  "(vec false false true true)"}
+rev_rule! {pi2_tffffttf, "(pi2 (vec (pr true false) (pr false false) (pr false true) (pr true false)))",  "(vec false false true false)"}
+rev_rule! {pi2_tffffttt, "(pi2 (vec (pr true false) (pr false false) (pr false true) (pr true true)))",  "(vec false false true true)"}
+rev_rule! {pi2_tffftfff, "(pi2 (vec (pr true false) (pr false false) (pr true false) (pr false false)))",  "(vec false false false false)"}
+rev_rule! {pi2_tffftfft, "(pi2 (vec (pr true false) (pr false false) (pr true false) (pr false true)))",  "(vec false false false true)"}
+rev_rule! {pi2_tffftftf, "(pi2 (vec (pr true false) (pr false false) (pr true false) (pr true false)))",  "(vec false false false false)"}
+rev_rule! {pi2_tffftftt, "(pi2 (vec (pr true false) (pr false false) (pr true false) (pr true true)))",  "(vec false false false true)"}
+rev_rule! {pi2_tfffttff, "(pi2 (vec (pr true false) (pr false false) (pr true true) (pr false false)))",  "(vec false false true false)"}
+rev_rule! {pi2_tfffttft, "(pi2 (vec (pr true false) (pr false false) (pr true true) (pr false true)))",  "(vec false false true true)"}
+rev_rule! {pi2_tffftttf, "(pi2 (vec (pr true false) (pr false false) (pr true true) (pr true false)))",  "(vec false false true false)"}
+rev_rule! {pi2_tffftttt, "(pi2 (vec (pr true false) (pr false false) (pr true true) (pr true true)))",  "(vec false false true true)"}
+rev_rule! {pi2_tfftffff, "(pi2 (vec (pr true false) (pr false true) (pr false false) (pr false false)))",  "(vec false true false false)"}
+rev_rule! {pi2_tfftffft, "(pi2 (vec (pr true false) (pr false true) (pr false false) (pr false true)))",  "(vec false true false true)"}
+rev_rule! {pi2_tfftfftf, "(pi2 (vec (pr true false) (pr false true) (pr false false) (pr true false)))",  "(vec false true false false)"}
+rev_rule! {pi2_tfftfftt, "(pi2 (vec (pr true false) (pr false true) (pr false false) (pr true true)))",  "(vec false true false true)"}
+rev_rule! {pi2_tfftftff, "(pi2 (vec (pr true false) (pr false true) (pr false true) (pr false false)))",  "(vec false true true false)"}
+rev_rule! {pi2_tfftftft, "(pi2 (vec (pr true false) (pr false true) (pr false true) (pr false true)))",  "(vec false true true true)"}
+rev_rule! {pi2_tfftfttf, "(pi2 (vec (pr true false) (pr false true) (pr false true) (pr true false)))",  "(vec false true true false)"}
+rev_rule! {pi2_tfftfttt, "(pi2 (vec (pr true false) (pr false true) (pr false true) (pr true true)))",  "(vec false true true true)"}
+rev_rule! {pi2_tffttfff, "(pi2 (vec (pr true false) (pr false true) (pr true false) (pr false false)))",  "(vec false true false false)"}
+rev_rule! {pi2_tffttfft, "(pi2 (vec (pr true false) (pr false true) (pr true false) (pr false true)))",  "(vec false true false true)"}
+rev_rule! {pi2_tffttftf, "(pi2 (vec (pr true false) (pr false true) (pr true false) (pr true false)))",  "(vec false true false false)"}
+rev_rule! {pi2_tffttftt, "(pi2 (vec (pr true false) (pr false true) (pr true false) (pr true true)))",  "(vec false true false true)"}
+rev_rule! {pi2_tfftttff, "(pi2 (vec (pr true false) (pr false true) (pr true true) (pr false false)))",  "(vec false true true false)"}
+rev_rule! {pi2_tfftttft, "(pi2 (vec (pr true false) (pr false true) (pr true true) (pr false true)))",  "(vec false true true true)"}
+rev_rule! {pi2_tffttttf, "(pi2 (vec (pr true false) (pr false true) (pr true true) (pr true false)))",  "(vec false true true false)"}
+rev_rule! {pi2_tffttttt, "(pi2 (vec (pr true false) (pr false true) (pr true true) (pr true true)))",  "(vec false true true true)"}
+rev_rule! {pi2_tftfffff, "(pi2 (vec (pr true false) (pr true false) (pr false false) (pr false false)))",  "(vec false false false false)"}
+rev_rule! {pi2_tftfffft, "(pi2 (vec (pr true false) (pr true false) (pr false false) (pr false true)))",  "(vec false false false true)"}
+rev_rule! {pi2_tftffftf, "(pi2 (vec (pr true false) (pr true false) (pr false false) (pr true false)))",  "(vec false false false false)"}
+rev_rule! {pi2_tftffftt, "(pi2 (vec (pr true false) (pr true false) (pr false false) (pr true true)))",  "(vec false false false true)"}
+rev_rule! {pi2_tftfftff, "(pi2 (vec (pr true false) (pr true false) (pr false true) (pr false false)))",  "(vec false false true false)"}
+rev_rule! {pi2_tftfftft, "(pi2 (vec (pr true false) (pr true false) (pr false true) (pr false true)))",  "(vec false false true true)"}
+rev_rule! {pi2_tftffttf, "(pi2 (vec (pr true false) (pr true false) (pr false true) (pr true false)))",  "(vec false false true false)"}
+rev_rule! {pi2_tftffttt, "(pi2 (vec (pr true false) (pr true false) (pr false true) (pr true true)))",  "(vec false false true true)"}
+rev_rule! {pi2_tftftfff, "(pi2 (vec (pr true false) (pr true false) (pr true false) (pr false false)))",  "(vec false false false false)"}
+rev_rule! {pi2_tftftfft, "(pi2 (vec (pr true false) (pr true false) (pr true false) (pr false true)))",  "(vec false false false true)"}
+rev_rule! {pi2_tftftftf, "(pi2 (vec (pr true false) (pr true false) (pr true false) (pr true false)))",  "(vec false false false false)"}
+rev_rule! {pi2_tftftftt, "(pi2 (vec (pr true false) (pr true false) (pr true false) (pr true true)))",  "(vec false false false true)"}
+rev_rule! {pi2_tftfttff, "(pi2 (vec (pr true false) (pr true false) (pr true true) (pr false false)))",  "(vec false false true false)"}
+rev_rule! {pi2_tftfttft, "(pi2 (vec (pr true false) (pr true false) (pr true true) (pr false true)))",  "(vec false false true true)"}
+rev_rule! {pi2_tftftttf, "(pi2 (vec (pr true false) (pr true false) (pr true true) (pr true false)))",  "(vec false false true false)"}
+rev_rule! {pi2_tftftttt, "(pi2 (vec (pr true false) (pr true false) (pr true true) (pr true true)))",  "(vec false false true true)"}
+rev_rule! {pi2_tfttffff, "(pi2 (vec (pr true false) (pr true true) (pr false false) (pr false false)))",  "(vec false true false false)"}
+rev_rule! {pi2_tfttffft, "(pi2 (vec (pr true false) (pr true true) (pr false false) (pr false true)))",  "(vec false true false true)"}
+rev_rule! {pi2_tfttfftf, "(pi2 (vec (pr true false) (pr true true) (pr false false) (pr true false)))",  "(vec false true false false)"}
+rev_rule! {pi2_tfttfftt, "(pi2 (vec (pr true false) (pr true true) (pr false false) (pr true true)))",  "(vec false true false true)"}
+rev_rule! {pi2_tfttftff, "(pi2 (vec (pr true false) (pr true true) (pr false true) (pr false false)))",  "(vec false true true false)"}
+rev_rule! {pi2_tfttftft, "(pi2 (vec (pr true false) (pr true true) (pr false true) (pr false true)))",  "(vec false true true true)"}
+rev_rule! {pi2_tfttfttf, "(pi2 (vec (pr true false) (pr true true) (pr false true) (pr true false)))",  "(vec false true true false)"}
+rev_rule! {pi2_tfttfttt, "(pi2 (vec (pr true false) (pr true true) (pr false true) (pr true true)))",  "(vec false true true true)"}
+rev_rule! {pi2_tftttfff, "(pi2 (vec (pr true false) (pr true true) (pr true false) (pr false false)))",  "(vec false true false false)"}
+rev_rule! {pi2_tftttfft, "(pi2 (vec (pr true false) (pr true true) (pr true false) (pr false true)))",  "(vec false true false true)"}
+rev_rule! {pi2_tftttftf, "(pi2 (vec (pr true false) (pr true true) (pr true false) (pr true false)))",  "(vec false true false false)"}
+rev_rule! {pi2_tftttftt, "(pi2 (vec (pr true false) (pr true true) (pr true false) (pr true true)))",  "(vec false true false true)"}
+rev_rule! {pi2_tfttttff, "(pi2 (vec (pr true false) (pr true true) (pr true true) (pr false false)))",  "(vec false true true false)"}
+rev_rule! {pi2_tfttttft, "(pi2 (vec (pr true false) (pr true true) (pr true true) (pr false true)))",  "(vec false true true true)"}
+rev_rule! {pi2_tftttttf, "(pi2 (vec (pr true false) (pr true true) (pr true true) (pr true false)))",  "(vec false true true false)"}
+rev_rule! {pi2_tftttttt, "(pi2 (vec (pr true false) (pr true true) (pr true true) (pr true true)))",  "(vec false true true true)"}
+rev_rule! {pi2_ttffffff, "(pi2 (vec (pr true true) (pr false false) (pr false false) (pr false false)))",  "(vec true false false false)"}
+rev_rule! {pi2_ttffffft, "(pi2 (vec (pr true true) (pr false false) (pr false false) (pr false true)))",  "(vec true false false true)"}
+rev_rule! {pi2_ttfffftf, "(pi2 (vec (pr true true) (pr false false) (pr false false) (pr true false)))",  "(vec true false false false)"}
+rev_rule! {pi2_ttfffftt, "(pi2 (vec (pr true true) (pr false false) (pr false false) (pr true true)))",  "(vec true false false true)"}
+rev_rule! {pi2_ttffftff, "(pi2 (vec (pr true true) (pr false false) (pr false true) (pr false false)))",  "(vec true false true false)"}
+rev_rule! {pi2_ttffftft, "(pi2 (vec (pr true true) (pr false false) (pr false true) (pr false true)))",  "(vec true false true true)"}
+rev_rule! {pi2_ttfffttf, "(pi2 (vec (pr true true) (pr false false) (pr false true) (pr true false)))",  "(vec true false true false)"}
+rev_rule! {pi2_ttfffttt, "(pi2 (vec (pr true true) (pr false false) (pr false true) (pr true true)))",  "(vec true false true true)"}
+rev_rule! {pi2_ttfftfff, "(pi2 (vec (pr true true) (pr false false) (pr true false) (pr false false)))",  "(vec true false false false)"}
+rev_rule! {pi2_ttfftfft, "(pi2 (vec (pr true true) (pr false false) (pr true false) (pr false true)))",  "(vec true false false true)"}
+rev_rule! {pi2_ttfftftf, "(pi2 (vec (pr true true) (pr false false) (pr true false) (pr true false)))",  "(vec true false false false)"}
+rev_rule! {pi2_ttfftftt, "(pi2 (vec (pr true true) (pr false false) (pr true false) (pr true true)))",  "(vec true false false true)"}
+rev_rule! {pi2_ttffttff, "(pi2 (vec (pr true true) (pr false false) (pr true true) (pr false false)))",  "(vec true false true false)"}
+rev_rule! {pi2_ttffttft, "(pi2 (vec (pr true true) (pr false false) (pr true true) (pr false true)))",  "(vec true false true true)"}
+rev_rule! {pi2_ttfftttf, "(pi2 (vec (pr true true) (pr false false) (pr true true) (pr true false)))",  "(vec true false true false)"}
+rev_rule! {pi2_ttfftttt, "(pi2 (vec (pr true true) (pr false false) (pr true true) (pr true true)))",  "(vec true false true true)"}
+rev_rule! {pi2_ttftffff, "(pi2 (vec (pr true true) (pr false true) (pr false false) (pr false false)))",  "(vec true true false false)"}
+rev_rule! {pi2_ttftffft, "(pi2 (vec (pr true true) (pr false true) (pr false false) (pr false true)))",  "(vec true true false true)"}
+rev_rule! {pi2_ttftfftf, "(pi2 (vec (pr true true) (pr false true) (pr false false) (pr true false)))",  "(vec true true false false)"}
+rev_rule! {pi2_ttftfftt, "(pi2 (vec (pr true true) (pr false true) (pr false false) (pr true true)))",  "(vec true true false true)"}
+rev_rule! {pi2_ttftftff, "(pi2 (vec (pr true true) (pr false true) (pr false true) (pr false false)))",  "(vec true true true false)"}
+rev_rule! {pi2_ttftftft, "(pi2 (vec (pr true true) (pr false true) (pr false true) (pr false true)))",  "(vec true true true true)"}
+rev_rule! {pi2_ttftfttf, "(pi2 (vec (pr true true) (pr false true) (pr false true) (pr true false)))",  "(vec true true true false)"}
+rev_rule! {pi2_ttftfttt, "(pi2 (vec (pr true true) (pr false true) (pr false true) (pr true true)))",  "(vec true true true true)"}
+rev_rule! {pi2_ttfttfff, "(pi2 (vec (pr true true) (pr false true) (pr true false) (pr false false)))",  "(vec true true false false)"}
+rev_rule! {pi2_ttfttfft, "(pi2 (vec (pr true true) (pr false true) (pr true false) (pr false true)))",  "(vec true true false true)"}
+rev_rule! {pi2_ttfttftf, "(pi2 (vec (pr true true) (pr false true) (pr true false) (pr true false)))",  "(vec true true false false)"}
+rev_rule! {pi2_ttfttftt, "(pi2 (vec (pr true true) (pr false true) (pr true false) (pr true true)))",  "(vec true true false true)"}
+rev_rule! {pi2_ttftttff, "(pi2 (vec (pr true true) (pr false true) (pr true true) (pr false false)))",  "(vec true true true false)"}
+rev_rule! {pi2_ttftttft, "(pi2 (vec (pr true true) (pr false true) (pr true true) (pr false true)))",  "(vec true true true true)"}
+rev_rule! {pi2_ttfttttf, "(pi2 (vec (pr true true) (pr false true) (pr true true) (pr true false)))",  "(vec true true true false)"}
+rev_rule! {pi2_ttfttttt, "(pi2 (vec (pr true true) (pr false true) (pr true true) (pr true true)))",  "(vec true true true true)"}
+rev_rule! {pi2_tttfffff, "(pi2 (vec (pr true true) (pr true false) (pr false false) (pr false false)))",  "(vec true false false false)"}
+rev_rule! {pi2_tttfffft, "(pi2 (vec (pr true true) (pr true false) (pr false false) (pr false true)))",  "(vec true false false true)"}
+rev_rule! {pi2_tttffftf, "(pi2 (vec (pr true true) (pr true false) (pr false false) (pr true false)))",  "(vec true false false false)"}
+rev_rule! {pi2_tttffftt, "(pi2 (vec (pr true true) (pr true false) (pr false false) (pr true true)))",  "(vec true false false true)"}
+rev_rule! {pi2_tttfftff, "(pi2 (vec (pr true true) (pr true false) (pr false true) (pr false false)))",  "(vec true false true false)"}
+rev_rule! {pi2_tttfftft, "(pi2 (vec (pr true true) (pr true false) (pr false true) (pr false true)))",  "(vec true false true true)"}
+rev_rule! {pi2_tttffttf, "(pi2 (vec (pr true true) (pr true false) (pr false true) (pr true false)))",  "(vec true false true false)"}
+rev_rule! {pi2_tttffttt, "(pi2 (vec (pr true true) (pr true false) (pr false true) (pr true true)))",  "(vec true false true true)"}
+rev_rule! {pi2_tttftfff, "(pi2 (vec (pr true true) (pr true false) (pr true false) (pr false false)))",  "(vec true false false false)"}
+rev_rule! {pi2_tttftfft, "(pi2 (vec (pr true true) (pr true false) (pr true false) (pr false true)))",  "(vec true false false true)"}
+rev_rule! {pi2_tttftftf, "(pi2 (vec (pr true true) (pr true false) (pr true false) (pr true false)))",  "(vec true false false false)"}
+rev_rule! {pi2_tttftftt, "(pi2 (vec (pr true true) (pr true false) (pr true false) (pr true true)))",  "(vec true false false true)"}
+rev_rule! {pi2_tttfttff, "(pi2 (vec (pr true true) (pr true false) (pr true true) (pr false false)))",  "(vec true false true false)"}
+rev_rule! {pi2_tttfttft, "(pi2 (vec (pr true true) (pr true false) (pr true true) (pr false true)))",  "(vec true false true true)"}
+rev_rule! {pi2_tttftttf, "(pi2 (vec (pr true true) (pr true false) (pr true true) (pr true false)))",  "(vec true false true false)"}
+rev_rule! {pi2_tttftttt, "(pi2 (vec (pr true true) (pr true false) (pr true true) (pr true true)))",  "(vec true false true true)"}
+rev_rule! {pi2_ttttffff, "(pi2 (vec (pr true true) (pr true true) (pr false false) (pr false false)))",  "(vec true true false false)"}
+rev_rule! {pi2_ttttffft, "(pi2 (vec (pr true true) (pr true true) (pr false false) (pr false true)))",  "(vec true true false true)"}
+rev_rule! {pi2_ttttfftf, "(pi2 (vec (pr true true) (pr true true) (pr false false) (pr true false)))",  "(vec true true false false)"}
+rev_rule! {pi2_ttttfftt, "(pi2 (vec (pr true true) (pr true true) (pr false false) (pr true true)))",  "(vec true true false true)"}
+rev_rule! {pi2_ttttftff, "(pi2 (vec (pr true true) (pr true true) (pr false true) (pr false false)))",  "(vec true true true false)"}
+rev_rule! {pi2_ttttftft, "(pi2 (vec (pr true true) (pr true true) (pr false true) (pr false true)))",  "(vec true true true true)"}
+rev_rule! {pi2_ttttfttf, "(pi2 (vec (pr true true) (pr true true) (pr false true) (pr true false)))",  "(vec true true true false)"}
+rev_rule! {pi2_ttttfttt, "(pi2 (vec (pr true true) (pr true true) (pr false true) (pr true true)))",  "(vec true true true true)"}
+rev_rule! {pi2_tttttfff, "(pi2 (vec (pr true true) (pr true true) (pr true false) (pr false false)))",  "(vec true true false false)"}
+rev_rule! {pi2_tttttfft, "(pi2 (vec (pr true true) (pr true true) (pr true false) (pr false true)))",  "(vec true true false true)"}
+rev_rule! {pi2_tttttftf, "(pi2 (vec (pr true true) (pr true true) (pr true false) (pr true false)))",  "(vec true true false false)"}
+rev_rule! {pi2_tttttftt, "(pi2 (vec (pr true true) (pr true true) (pr true false) (pr true true)))",  "(vec true true false true)"}
+rev_rule! {pi2_ttttttff, "(pi2 (vec (pr true true) (pr true true) (pr true true) (pr false false)))",  "(vec true true true false)"}
+rev_rule! {pi2_ttttttft, "(pi2 (vec (pr true true) (pr true true) (pr true true) (pr false true)))",  "(vec true true true true)"}
+rev_rule! {pi2_tttttttf, "(pi2 (vec (pr true true) (pr true true) (pr true true) (pr true false)))",  "(vec true true true false)"}
+rev_rule! {pi2_tttttttt, "(pi2 (vec (pr true true) (pr true true) (pr true true) (pr true true)))",  "(vec true true true true)"}
+
 rule! {input, "(vec (pr false false) (pr false true) (pr true false) (pr true true))", "x"}
 
 // (vec false true true false)
@@ -655,9 +1174,523 @@ fn prove_simple() {
     and_ttttttft(),
     and_tttttttf(),
     and_tttttttt(),
+    pi1_ffffffff(),
+    pi1_ffffffft(),
+    pi1_fffffftf(),
+    pi1_fffffftt(),
+    pi1_ffffftff(),
+    pi1_ffffftft(),
+    pi1_fffffttf(),
+    pi1_fffffttt(),
+    pi1_fffftfff(),
+    pi1_fffftfft(),
+    pi1_fffftftf(),
+    pi1_fffftftt(),
+    pi1_ffffttff(),
+    pi1_ffffttft(),
+    pi1_fffftttf(),
+    pi1_fffftttt(),
+    pi1_ffftffff(),
+    pi1_ffftffft(),
+    pi1_ffftfftf(),
+    pi1_ffftfftt(),
+    pi1_ffftftff(),
+    pi1_ffftftft(),
+    pi1_ffftfttf(),
+    pi1_ffftfttt(),
+    pi1_fffttfff(),
+    pi1_fffttfft(),
+    pi1_fffttftf(),
+    pi1_fffttftt(),
+    pi1_ffftttff(),
+    pi1_ffftttft(),
+    pi1_fffttttf(),
+    pi1_fffttttt(),
+    pi1_fftfffff(),
+    pi1_fftfffft(),
+    pi1_fftffftf(),
+    pi1_fftffftt(),
+    pi1_fftfftff(),
+    pi1_fftfftft(),
+    pi1_fftffttf(),
+    pi1_fftffttt(),
+    pi1_fftftfff(),
+    pi1_fftftfft(),
+    pi1_fftftftf(),
+    pi1_fftftftt(),
+    pi1_fftfttff(),
+    pi1_fftfttft(),
+    pi1_fftftttf(),
+    pi1_fftftttt(),
+    pi1_ffttffff(),
+    pi1_ffttffft(),
+    pi1_ffttfftf(),
+    pi1_ffttfftt(),
+    pi1_ffttftff(),
+    pi1_ffttftft(),
+    pi1_ffttfttf(),
+    pi1_ffttfttt(),
+    pi1_fftttfff(),
+    pi1_fftttfft(),
+    pi1_fftttftf(),
+    pi1_fftttftt(),
+    pi1_ffttttff(),
+    pi1_ffttttft(),
+    pi1_fftttttf(),
+    pi1_fftttttt(),
+    pi1_ftffffff(),
+    pi1_ftffffft(),
+    pi1_ftfffftf(),
+    pi1_ftfffftt(),
+    pi1_ftffftff(),
+    pi1_ftffftft(),
+    pi1_ftfffttf(),
+    pi1_ftfffttt(),
+    pi1_ftfftfff(),
+    pi1_ftfftfft(),
+    pi1_ftfftftf(),
+    pi1_ftfftftt(),
+    pi1_ftffttff(),
+    pi1_ftffttft(),
+    pi1_ftfftttf(),
+    pi1_ftfftttt(),
+    pi1_ftftffff(),
+    pi1_ftftffft(),
+    pi1_ftftfftf(),
+    pi1_ftftfftt(),
+    pi1_ftftftff(),
+    pi1_ftftftft(),
+    pi1_ftftfttf(),
+    pi1_ftftfttt(),
+    pi1_ftfttfff(),
+    pi1_ftfttfft(),
+    pi1_ftfttftf(),
+    pi1_ftfttftt(),
+    pi1_ftftttff(),
+    pi1_ftftttft(),
+    pi1_ftfttttf(),
+    pi1_ftfttttt(),
+    pi1_fttfffff(),
+    pi1_fttfffft(),
+    pi1_fttffftf(),
+    pi1_fttffftt(),
+    pi1_fttfftff(),
+    pi1_fttfftft(),
+    pi1_fttffttf(),
+    pi1_fttffttt(),
+    pi1_fttftfff(),
+    pi1_fttftfft(),
+    pi1_fttftftf(),
+    pi1_fttftftt(),
+    pi1_fttfttff(),
+    pi1_fttfttft(),
+    pi1_fttftttf(),
+    pi1_fttftttt(),
+    pi1_ftttffff(),
+    pi1_ftttffft(),
+    pi1_ftttfftf(),
+    pi1_ftttfftt(),
+    pi1_ftttftff(),
+    pi1_ftttftft(),
+    pi1_ftttfttf(),
+    pi1_ftttfttt(),
+    pi1_fttttfff(),
+    pi1_fttttfft(),
+    pi1_fttttftf(),
+    pi1_fttttftt(),
+    pi1_ftttttff(),
+    pi1_ftttttft(),
+    pi1_fttttttf(),
+    pi1_fttttttt(),
+    pi1_tfffffff(),
+    pi1_tfffffft(),
+    pi1_tffffftf(),
+    pi1_tffffftt(),
+    pi1_tfffftff(),
+    pi1_tfffftft(),
+    pi1_tffffttf(),
+    pi1_tffffttt(),
+    pi1_tffftfff(),
+    pi1_tffftfft(),
+    pi1_tffftftf(),
+    pi1_tffftftt(),
+    pi1_tfffttff(),
+    pi1_tfffttft(),
+    pi1_tffftttf(),
+    pi1_tffftttt(),
+    pi1_tfftffff(),
+    pi1_tfftffft(),
+    pi1_tfftfftf(),
+    pi1_tfftfftt(),
+    pi1_tfftftff(),
+    pi1_tfftftft(),
+    pi1_tfftfttf(),
+    pi1_tfftfttt(),
+    pi1_tffttfff(),
+    pi1_tffttfft(),
+    pi1_tffttftf(),
+    pi1_tffttftt(),
+    pi1_tfftttff(),
+    pi1_tfftttft(),
+    pi1_tffttttf(),
+    pi1_tffttttt(),
+    pi1_tftfffff(),
+    pi1_tftfffft(),
+    pi1_tftffftf(),
+    pi1_tftffftt(),
+    pi1_tftfftff(),
+    pi1_tftfftft(),
+    pi1_tftffttf(),
+    pi1_tftffttt(),
+    pi1_tftftfff(),
+    pi1_tftftfft(),
+    pi1_tftftftf(),
+    pi1_tftftftt(),
+    pi1_tftfttff(),
+    pi1_tftfttft(),
+    pi1_tftftttf(),
+    pi1_tftftttt(),
+    pi1_tfttffff(),
+    pi1_tfttffft(),
+    pi1_tfttfftf(),
+    pi1_tfttfftt(),
+    pi1_tfttftff(),
+    pi1_tfttftft(),
+    pi1_tfttfttf(),
+    pi1_tfttfttt(),
+    pi1_tftttfff(),
+    pi1_tftttfft(),
+    pi1_tftttftf(),
+    pi1_tftttftt(),
+    pi1_tfttttff(),
+    pi1_tfttttft(),
+    pi1_tftttttf(),
+    pi1_tftttttt(),
+    pi1_ttffffff(),
+    pi1_ttffffft(),
+    pi1_ttfffftf(),
+    pi1_ttfffftt(),
+    pi1_ttffftff(),
+    pi1_ttffftft(),
+    pi1_ttfffttf(),
+    pi1_ttfffttt(),
+    pi1_ttfftfff(),
+    pi1_ttfftfft(),
+    pi1_ttfftftf(),
+    pi1_ttfftftt(),
+    pi1_ttffttff(),
+    pi1_ttffttft(),
+    pi1_ttfftttf(),
+    pi1_ttfftttt(),
+    pi1_ttftffff(),
+    pi1_ttftffft(),
+    pi1_ttftfftf(),
+    pi1_ttftfftt(),
+    pi1_ttftftff(),
+    pi1_ttftftft(),
+    pi1_ttftfttf(),
+    pi1_ttftfttt(),
+    pi1_ttfttfff(),
+    pi1_ttfttfft(),
+    pi1_ttfttftf(),
+    pi1_ttfttftt(),
+    pi1_ttftttff(),
+    pi1_ttftttft(),
+    pi1_ttfttttf(),
+    pi1_ttfttttt(),
+    pi1_tttfffff(),
+    pi1_tttfffft(),
+    pi1_tttffftf(),
+    pi1_tttffftt(),
+    pi1_tttfftff(),
+    pi1_tttfftft(),
+    pi1_tttffttf(),
+    pi1_tttffttt(),
+    pi1_tttftfff(),
+    pi1_tttftfft(),
+    pi1_tttftftf(),
+    pi1_tttftftt(),
+    pi1_tttfttff(),
+    pi1_tttfttft(),
+    pi1_tttftttf(),
+    pi1_tttftttt(),
+    pi1_ttttffff(),
+    pi1_ttttffft(),
+    pi1_ttttfftf(),
+    pi1_ttttfftt(),
+    pi1_ttttftff(),
+    pi1_ttttftft(),
+    pi1_ttttfttf(),
+    pi1_ttttfttt(),
+    pi1_tttttfff(),
+    pi1_tttttfft(),
+    pi1_tttttftf(),
+    pi1_tttttftt(),
+    pi1_ttttttff(),
+    pi1_ttttttft(),
+    pi1_tttttttf(),
+    pi1_tttttttt(),
+    pi2_ffffffff(),
+    pi2_ffffffft(),
+    pi2_fffffftf(),
+    pi2_fffffftt(),
+    pi2_ffffftff(),
+    pi2_ffffftft(),
+    pi2_fffffttf(),
+    pi2_fffffttt(),
+    pi2_fffftfff(),
+    pi2_fffftfft(),
+    pi2_fffftftf(),
+    pi2_fffftftt(),
+    pi2_ffffttff(),
+    pi2_ffffttft(),
+    pi2_fffftttf(),
+    pi2_fffftttt(),
+    pi2_ffftffff(),
+    pi2_ffftffft(),
+    pi2_ffftfftf(),
+    pi2_ffftfftt(),
+    pi2_ffftftff(),
+    pi2_ffftftft(),
+    pi2_ffftfttf(),
+    pi2_ffftfttt(),
+    pi2_fffttfff(),
+    pi2_fffttfft(),
+    pi2_fffttftf(),
+    pi2_fffttftt(),
+    pi2_ffftttff(),
+    pi2_ffftttft(),
+    pi2_fffttttf(),
+    pi2_fffttttt(),
+    pi2_fftfffff(),
+    pi2_fftfffft(),
+    pi2_fftffftf(),
+    pi2_fftffftt(),
+    pi2_fftfftff(),
+    pi2_fftfftft(),
+    pi2_fftffttf(),
+    pi2_fftffttt(),
+    pi2_fftftfff(),
+    pi2_fftftfft(),
+    pi2_fftftftf(),
+    pi2_fftftftt(),
+    pi2_fftfttff(),
+    pi2_fftfttft(),
+    pi2_fftftttf(),
+    pi2_fftftttt(),
+    pi2_ffttffff(),
+    pi2_ffttffft(),
+    pi2_ffttfftf(),
+    pi2_ffttfftt(),
+    pi2_ffttftff(),
+    pi2_ffttftft(),
+    pi2_ffttfttf(),
+    pi2_ffttfttt(),
+    pi2_fftttfff(),
+    pi2_fftttfft(),
+    pi2_fftttftf(),
+    pi2_fftttftt(),
+    pi2_ffttttff(),
+    pi2_ffttttft(),
+    pi2_fftttttf(),
+    pi2_fftttttt(),
+    pi2_ftffffff(),
+    pi2_ftffffft(),
+    pi2_ftfffftf(),
+    pi2_ftfffftt(),
+    pi2_ftffftff(),
+    pi2_ftffftft(),
+    pi2_ftfffttf(),
+    pi2_ftfffttt(),
+    pi2_ftfftfff(),
+    pi2_ftfftfft(),
+    pi2_ftfftftf(),
+    pi2_ftfftftt(),
+    pi2_ftffttff(),
+    pi2_ftffttft(),
+    pi2_ftfftttf(),
+    pi2_ftfftttt(),
+    pi2_ftftffff(),
+    pi2_ftftffft(),
+    pi2_ftftfftf(),
+    pi2_ftftfftt(),
+    pi2_ftftftff(),
+    pi2_ftftftft(),
+    pi2_ftftfttf(),
+    pi2_ftftfttt(),
+    pi2_ftfttfff(),
+    pi2_ftfttfft(),
+    pi2_ftfttftf(),
+    pi2_ftfttftt(),
+    pi2_ftftttff(),
+    pi2_ftftttft(),
+    pi2_ftfttttf(),
+    pi2_ftfttttt(),
+    pi2_fttfffff(),
+    pi2_fttfffft(),
+    pi2_fttffftf(),
+    pi2_fttffftt(),
+    pi2_fttfftff(),
+    pi2_fttfftft(),
+    pi2_fttffttf(),
+    pi2_fttffttt(),
+    pi2_fttftfff(),
+    pi2_fttftfft(),
+    pi2_fttftftf(),
+    pi2_fttftftt(),
+    pi2_fttfttff(),
+    pi2_fttfttft(),
+    pi2_fttftttf(),
+    pi2_fttftttt(),
+    pi2_ftttffff(),
+    pi2_ftttffft(),
+    pi2_ftttfftf(),
+    pi2_ftttfftt(),
+    pi2_ftttftff(),
+    pi2_ftttftft(),
+    pi2_ftttfttf(),
+    pi2_ftttfttt(),
+    pi2_fttttfff(),
+    pi2_fttttfft(),
+    pi2_fttttftf(),
+    pi2_fttttftt(),
+    pi2_ftttttff(),
+    pi2_ftttttft(),
+    pi2_fttttttf(),
+    pi2_fttttttt(),
+    pi2_tfffffff(),
+    pi2_tfffffft(),
+    pi2_tffffftf(),
+    pi2_tffffftt(),
+    pi2_tfffftff(),
+    pi2_tfffftft(),
+    pi2_tffffttf(),
+    pi2_tffffttt(),
+    pi2_tffftfff(),
+    pi2_tffftfft(),
+    pi2_tffftftf(),
+    pi2_tffftftt(),
+    pi2_tfffttff(),
+    pi2_tfffttft(),
+    pi2_tffftttf(),
+    pi2_tffftttt(),
+    pi2_tfftffff(),
+    pi2_tfftffft(),
+    pi2_tfftfftf(),
+    pi2_tfftfftt(),
+    pi2_tfftftff(),
+    pi2_tfftftft(),
+    pi2_tfftfttf(),
+    pi2_tfftfttt(),
+    pi2_tffttfff(),
+    pi2_tffttfft(),
+    pi2_tffttftf(),
+    pi2_tffttftt(),
+    pi2_tfftttff(),
+    pi2_tfftttft(),
+    pi2_tffttttf(),
+    pi2_tffttttt(),
+    pi2_tftfffff(),
+    pi2_tftfffft(),
+    pi2_tftffftf(),
+    pi2_tftffftt(),
+    pi2_tftfftff(),
+    pi2_tftfftft(),
+    pi2_tftffttf(),
+    pi2_tftffttt(),
+    pi2_tftftfff(),
+    pi2_tftftfft(),
+    pi2_tftftftf(),
+    pi2_tftftftt(),
+    pi2_tftfttff(),
+    pi2_tftfttft(),
+    pi2_tftftttf(),
+    pi2_tftftttt(),
+    pi2_tfttffff(),
+    pi2_tfttffft(),
+    pi2_tfttfftf(),
+    pi2_tfttfftt(),
+    pi2_tfttftff(),
+    pi2_tfttftft(),
+    pi2_tfttfttf(),
+    pi2_tfttfttt(),
+    pi2_tftttfff(),
+    pi2_tftttfft(),
+    pi2_tftttftf(),
+    pi2_tftttftt(),
+    pi2_tfttttff(),
+    pi2_tfttttft(),
+    pi2_tftttttf(),
+    pi2_tftttttt(),
+    pi2_ttffffff(),
+    pi2_ttffffft(),
+    pi2_ttfffftf(),
+    pi2_ttfffftt(),
+    pi2_ttffftff(),
+    pi2_ttffftft(),
+    pi2_ttfffttf(),
+    pi2_ttfffttt(),
+    pi2_ttfftfff(),
+    pi2_ttfftfft(),
+    pi2_ttfftftf(),
+    pi2_ttfftftt(),
+    pi2_ttffttff(),
+    pi2_ttffttft(),
+    pi2_ttfftttf(),
+    pi2_ttfftttt(),
+    pi2_ttftffff(),
+    pi2_ttftffft(),
+    pi2_ttftfftf(),
+    pi2_ttftfftt(),
+    pi2_ttftftff(),
+    pi2_ttftftft(),
+    pi2_ttftfttf(),
+    pi2_ttftfttt(),
+    pi2_ttfttfff(),
+    pi2_ttfttfft(),
+    pi2_ttfttftf(),
+    pi2_ttfttftt(),
+    pi2_ttftttff(),
+    pi2_ttftttft(),
+    pi2_ttfttttf(),
+    pi2_ttfttttt(),
+    pi2_tttfffff(),
+    pi2_tttfffft(),
+    pi2_tttffftf(),
+    pi2_tttffftt(),
+    pi2_tttfftff(),
+    pi2_tttfftft(),
+    pi2_tttffttf(),
+    pi2_tttffttt(),
+    pi2_tttftfff(),
+    pi2_tttftfft(),
+    pi2_tttftftf(),
+    pi2_tttftftt(),
+    pi2_tttfttff(),
+    pi2_tttfttft(),
+    pi2_tttftttf(),
+    pi2_tttftttt(),
+    pi2_ttttffff(),
+    pi2_ttttffft(),
+    pi2_ttttfftf(),
+    pi2_ttttfftt(),
+    pi2_ttttftff(),
+    pi2_ttttftft(),
+    pi2_ttttfttf(),
+    pi2_ttttfttt(),
+    pi2_tttttfff(),
+    pi2_tttttfft(),
+    pi2_tttttftf(),
+    pi2_tttttftt(),
+    pi2_ttttttff(),
+    pi2_ttttttft(),
+    pi2_tttttttf(),
+    pi2_tttttttt(),
+    // pi1(),
+    // pi2(),
     input(),
   ];
-  prove_something("simple", "(vec false false false true)", rules, &[]);
+  prove_something("simple", "(vec false true false true)", rules, &[]);
 }
 
 // #[test]

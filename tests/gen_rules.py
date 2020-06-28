@@ -22,15 +22,16 @@ def main():
     for x1, y1, x2, y2, x3, y3, x4, y4 in list(itertools.product(*[[False, True]]*8)):
         strs = [str(b).lower() for b in (x1, y1, x2, y2, x3, y3, x4, y4)]
         prs = [(x1, y1), (x2, y2), (x3, y3), (x4, y4)]
-        # print(f"rev_rule! {{and_{''.join([s[0] for s in strs])}, \"", end='')
+        op = "pi2"
+        # print(f"rev_rule! {{{op}_{''.join([s[0] for s in strs])}, \"", end='')
 
-        print(f"and_{''.join([s[0] for s in strs])}(),")
-        # print(f"(& (vec", end='')
+        print(f"{op}_{''.join([s[0] for s in strs])}(),")
+        # print(f"({op} (vec", end='')
         # for pr in prs:
         #     print(f" (pr {str(pr[0]).lower()} {str(pr[1]).lower()})", end='')
         # print(f"))\", ", end='')
-        # and_prs = [x and y for x, y in prs]
-        # print(f" \"(vec {' '.join([str(b).lower() for b in and_prs])})\"}}")
+        # pi_prs = [y for x, y in prs]
+        # print(f" \"(vec {' '.join([str(b).lower() for b in pi_prs])})\"}}")
 
 
 if __name__ == "__main__":
