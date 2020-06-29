@@ -227,7 +227,7 @@ fn prove_xor() {
     println!("iteration {}", i);
     unscrambled_egg = intersect_and_dump(format!("xor-{}", i).as_str(), &unscrambled_egg, egg);
 
-    let mut extractor = Extractor::new(&unscrambled_egg, CostFn);
+    let mut extractor = Extractor::new(&unscrambled_egg, AstSize);
     for eclass in unscrambled_egg.classes() {
       let (best_cost, best) = extractor.find_best(eclass.id);
       println!("best cost {}", best_cost);
