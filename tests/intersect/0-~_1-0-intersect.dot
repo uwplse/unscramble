@@ -1,0 +1,9 @@
+digraph egraph {
+  compound=true
+  clusterrank=local
+  subgraph cluster_0 {
+    style=dotted
+    0.0[label = "false"]
+    0.1[label = "x"]
+  }
+}

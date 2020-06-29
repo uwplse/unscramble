@@ -1,0 +1,22 @@
+digraph egraph {
+  compound=true
+  clusterrank=local
+  subgraph cluster_0 {
+    style=dotted
+    0.0[label = "false"]
+    0.1[label = "x"]
+  }
+  subgraph cluster_2 {
+    style=dotted
+    2.0[label = "~"]
+    2.1[label = "true"]
+  }
+  subgraph cluster_3 {
+    style=dotted
+    3.0[label = "y"]
+    3.1[label = "&"]
+  }
+  2.0 -> 0.0 [lhead = cluster_0, ]
+  3.1:sw -> 3.1:n [lhead = cluster_3, ]
+  3.1:se -> 3.1:n [lhead = cluster_3, ]
+}

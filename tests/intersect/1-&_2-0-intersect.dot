@@ -1,0 +1,56 @@
+digraph egraph {
+  compound=true
+  clusterrank=local
+  subgraph cluster_0 {
+    style=dotted
+    0.0[label = "false"]
+    0.1[label = "x"]
+    0.2[label = "&"]
+    0.3[label = "&"]
+    0.4[label = "&"]
+    0.5[label = "&"]
+    0.6[label = "&"]
+    0.7[label = "~"]
+    0.8[label = "&"]
+  }
+  subgraph cluster_2 {
+    style=dotted
+    2.0[label = "~"]
+    2.1[label = "true"]
+    2.2[label = "&"]
+  }
+  subgraph cluster_3 {
+    style=dotted
+    3.0[label = "y"]
+    3.1[label = "&"]
+    3.2[label = "&"]
+    3.3[label = "&"]
+  }
+  subgraph cluster_15 {
+    style=dotted
+    15.0[label = "~"]
+  }
+  0.2:sw -> 3.0 [lhead = cluster_3, ]
+  0.2:se -> 0.2:n [lhead = cluster_0, ]
+  0.3:sw -> 0.3:n [lhead = cluster_0, ]
+  0.3:se -> 3.0 [lhead = cluster_3, ]
+  0.4:sw -> 0.4:n [lhead = cluster_0, ]
+  0.4:se -> 0.4:n [lhead = cluster_0, ]
+  0.5:sw -> 0.5:n [lhead = cluster_0, ]
+  0.5:se -> 2.0 [lhead = cluster_2, ]
+  0.6:sw -> 2.0 [lhead = cluster_2, ]
+  0.6:se -> 0.6:n [lhead = cluster_0, ]
+  0.7 -> 2.0 [lhead = cluster_2, ]
+  0.8:sw -> 3.0 [lhead = cluster_3, ]
+  0.8:se -> 15.0 [lhead = cluster_15, ]
+  2.0 -> 0.0 [lhead = cluster_0, ]
+  2.2:sw -> 2.2:n [lhead = cluster_2, ]
+  2.2:se -> 2.2:n [lhead = cluster_2, ]
+  3.1:sw -> 3.1:n [lhead = cluster_3, ]
+  3.1:se -> 3.1:n [lhead = cluster_3, ]
+  3.2:sw -> 3.2:n [lhead = cluster_3, ]
+  3.2:se -> 2.0 [lhead = cluster_2, ]
+  3.3:sw -> 2.0 [lhead = cluster_2, ]
+  3.3:se -> 3.3:n [lhead = cluster_3, ]
+  15.0 -> 3.0 [lhead = cluster_3, ]
+}
