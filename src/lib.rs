@@ -119,9 +119,9 @@ pub fn intersect<L: Language, N: Analysis<L>>(a: &EGraph<L, N>, b: &EGraph<L, N>
             println!("Merging {} and {}", prod_parent, intersected_parent);
             let (new_parent, _) = intersection.union(prod_parent, *intersected_parent);
             // go through prod_ids map and recanonicalize
-            for (_, idv) in prod_ids.iter_mut() {
+            /* for (_, idv) in prod_ids.iter_mut() {
               *idv = intersection.find(*idv);
-            }
+            } */
             prod_ids.insert((*parent_ec1, *parent_ec2), new_parent);
             println!("  to {}", new_parent);
           } else {
