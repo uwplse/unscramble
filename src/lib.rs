@@ -104,9 +104,9 @@ pub fn intersect<L: Language, N: Analysis<L>>(a: &EGraph<L, N>, b: &EGraph<L, N>
           println!("Adding node: {:?}", &new_en1);
           println!("  old -> new: {:?}", new_children);
           let prod_parent = intersection.add(new_en1);
-          for (_, idv) in prod_ids.iter_mut() {
+          /* for (_, idv) in prod_ids.iter_mut() {
             *idv = intersection.find(*idv);
-          }
+          } */
           println!(
             "  from: {:?}[{}] {:?}[{}]",
             &en1, parent_ec1, &en2, parent_ec2
