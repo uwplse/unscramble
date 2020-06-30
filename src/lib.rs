@@ -140,3 +140,43 @@ pub fn intersect<L: Language, N: Analysis<L>>(
 
   (intersection, intersection_roots)
 }
+
+/*
+
+Let (C, R_C) = (A, R_A) \cap (B, R_B).
+If R_C = {}, then the intersection L(A) \cap L(B) is empty, where L(X) is a
+language of finite-length conditional-free programs consistent with some
+input-output constraint.
+
+  TODO: formalize, generally if possible, the flow of IO constraints
+
+To recover from this, we define a set of  "introductions" of the form
+
+  ?x -> f(?1, ..., ?n), where any ?i can be ?x and ?x need not be a wildcard
+
+Supposing R_C = {}, and assuming for now that |R_A| = |R_B| = 1,
+let r_A and r_B be the root eclasses of A and B respectively.
+
+  TODO: I'm currently proceeding by extracting programs from A and B,
+        and adding them to a new egraph C' (under the assumption that their
+        roots will be disjoint).
+
+        A potentially better approach, which I think would decrease the time
+        needed to (re)saturate, is to literally union the egraphs hypergraph
+        style and then rebuild. Probably need @mwillsey to see if this makes sense.
+
+We extract two RecExprs p_A and p_B from r_A and r_B respectively, and add them
+to a new (initially empty) egraph C'. Let r_A' and r_B' be the new eclasses for
+these exprs respectively. We also add two new symbol exprs !A and !B into r_A'
+and r_B' respectively.
+
+We now perform a "concretization" of the introductions defined previously.
+For each introduction ?x -> f(?1,...,?n), we instantiate rewrite rules
+
+  !x -> f(?1,...,?n) for ?1,...,?n \in {!A, !B}, where the wildcard relations
+                     between the LHS and RHS are preserved.
+
+These rules are then supplied together with the original non-input rewrite rules
+to saturate C', and we extract the final program from
+
+*/
