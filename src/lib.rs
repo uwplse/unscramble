@@ -22,11 +22,13 @@ use itertools::iproduct;
 use std::collections::HashMap;
 use std::string::String;
 
-// type Transition = (Vec<Id>, Id);
+pub type RootedEGraph<L: Language, N: Analysis<L>> = (EGraph<L, N>, Vec<Id>);
+
 type Transition<L: Language> = (L, Id);
 type ProdTransition<L: Language> = (Transition<L>, Transition<L>);
 type ProdWorklist<L: Language> = HashMap<String, Vec<ProdTransition<L>>>;
 
+// TODO: figure out a portable way of doing this
 fn enode_hash<L: Language>(enode: &L) -> String {
   format!("{}_{}", enode.display_op(), enode.len())
 }
@@ -37,14 +39,16 @@ fn enode_map<L: Language, N: Analysis<L>>(g: &EGraph<L, N>) -> HashMap<String, V
     for node in class.iter() {
       let hash = enode_hash(node);
       let vals = map.entry(hash).or_insert(vec![]);
-      // vals.push((node.children().to_vec(), class.id));
       vals.push((node.clone(), class.id));
     }
   }
   map
 }
 
-pub fn intersect<L: Language, N: Analysis<L>>(a: &EGraph<L, N>, b: &EGraph<L, N>) -> EGraph<L, ()> {
+pub fn intersect<L: Language, N: Analysis<L>>(
+  (a, a_roots): &RootedEGraph<L, N>,
+  (b, b_roots): &RootedEGraph<L, N>,
+) -> RootedEGraph<L, ()> {
   let map_a = enode_map(a);
   println!("A map:");
   for (key, value) in &map_a {
@@ -56,7 +60,8 @@ pub fn intersect<L: Language, N: Analysis<L>>(a: &EGraph<L, N>, b: &EGraph<L, N>
     println!("  {}: {:?}", key, value);
   }
 
-  // construct ProdWorklist
+  // TODO: lazy bottom-up construction to avoid enumerating spurious states
+  // construct worklist
   let mut worklist: ProdWorklist<L> = ProdWorklist::new();
   for (key, value_a) in &map_a {
     if let Some(value_b) = map_b.get(key) {
@@ -70,13 +75,14 @@ pub fn intersect<L: Language, N: Analysis<L>>(a: &EGraph<L, N>, b: &EGraph<L, N>
   println!("generated worklist: {:?}", worklist);
 
   let mut intersection: EGraph<L, ()> = EGraph::new(()); /* TODO: transfer analysis */
+  let mut intersection_roots: Vec<Id> = vec![];
+
   let mut prod_ids: HashMap<(Id, Id), Id> = HashMap::new();
   let mut did_something = true;
 
-  let mut iteration = 0;
   while did_something {
     did_something = false;
-    for (key, value) in &mut worklist {
+    for (_, value) in &mut worklist {
       let mut finished_idxs = vec![];
       for (idx, ((en1, parent_ec1), (en2, parent_ec2))) in value.iter().enumerate() {
         let children_inhabited = en1
@@ -85,66 +91,52 @@ pub fn intersect<L: Language, N: Analysis<L>>(a: &EGraph<L, N>, b: &EGraph<L, N>
           .zip(en2.children())
           .all(|(c1, c2)| prod_ids.contains_key(&(*c1, *c2)));
         if children_inhabited {
-          println!("map: {:?}", prod_ids);
+          // println!("map: {:?}", prod_ids);
           /* add to new egraph */
-          let mut new_children: Vec<Id> = en1
+          let new_children: Vec<Id> = en1
             .children()
             .iter()
             .zip(en2.children())
             .map(|(c1, c2)| *prod_ids.get(&(*c1, *c2)).unwrap())
             .collect();
-          // for (c1, c2) in en1.children().iter().zip(en2.children()) {
-          //   new_children.insert(c1, prod_ids[&(*c1, *c2)]);
-          // }
-          // let new_en1 = en1.clone().map_children(|c1| new_children[&c1]);
           let mut new_en1 = en1.clone();
           for (i, c) in new_en1.children_mut().iter_mut().enumerate() {
             *c = new_children[i];
           }
-          println!("Adding node: {:?}", &new_en1);
-          println!("  old -> new: {:?}", new_children);
+          // println!("Adding node: {:?}", &new_en1);
+          // println!("  old -> new: {:?}", new_children);
           let prod_parent = intersection.add(new_en1);
-          /* for (_, idv) in prod_ids.iter_mut() {
-            *idv = intersection.find(*idv);
-          } */
-          println!(
-            "  from: {:?}[{}] {:?}[{}]",
-            &en1, parent_ec1, &en2, parent_ec2
-          );
-          println!("  new parent: {}", &prod_parent);
+          // println!(
+          //   "  from: {:?}[{}] {:?}[{}]",
+          //   &en1, parent_ec1, &en2, parent_ec2
+          // );
+          // println!("  new parent: {}", &prod_parent);
           did_something = true;
           finished_idxs.push(idx);
           let parent_inhabited = prod_ids.get(&(*parent_ec1, *parent_ec2));
           if let Some(intersected_parent) = parent_inhabited {
-            println!("Merging {} and {}", prod_parent, intersected_parent);
+            // println!("Merging {} and {}", prod_parent, intersected_parent);
             let (new_parent, _) = intersection.union(prod_parent, *intersected_parent);
-            // go through prod_ids map and recanonicalize
-            /* for (_, idv) in prod_ids.iter_mut() {
-              *idv = intersection.find(*idv);
-            } */
             prod_ids.insert((*parent_ec1, *parent_ec2), new_parent);
-            println!("  to {}", new_parent);
+          // println!("  to {}", new_parent);
           } else {
             prod_ids.insert((*parent_ec1, *parent_ec2), prod_parent);
           }
         }
-        /* intersection
-        .dot()
-        .to_dot(format!(
-          "tests/intersect/{}-{}-{}-intersect.dot",
-          iteration, key, idx
-        ))
-        .unwrap(); */
       }
       while !finished_idxs.is_empty() {
         value.remove(finished_idxs.pop().unwrap());
       }
     }
-    iteration += 1;
   }
-  intersection
-}
 
-// for key_a in map_a.keys() {
-//   if map_b.contains_key(key_a) {}
-// }
+  // TODO: this can probably be done in the loop above/lazily
+  // identify new roots
+  for (r_a, r_b) in itertools::iproduct!(a_roots.iter(), b_roots.iter()) {
+    if let Some(r_i) = prod_ids.get(&(*r_a, *r_b)) {
+      intersection_roots.push(*r_i);
+    }
+  }
+
+  (intersection, intersection_roots)
+}

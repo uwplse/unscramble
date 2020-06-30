@@ -56,11 +56,11 @@ fn prove_something(name: &str, start: &str, rewrites: &[Rewrite], goals: &[&str]
 
   egraph.dot().to_dot(format!("tests/{}.dot", name)).unwrap();
 
-  let intersection = intersect(&egraph, &egraph);
-  intersection
-    .dot()
-    .to_dot(format!("tests/{}-intersect.dot", name))
-    .unwrap();
+  // let intersection = intersect(&egraph, &egraph);
+  // intersection
+  //   .dot()
+  //   .to_dot(format!("tests/{}-intersect.dot", name))
+  //   .unwrap();
 
   for (i, (goal_expr, goal_str)) in goal_exprs.iter().zip(goals).enumerate() {
     println!("Trying to prove goal {}: {}", i, goal_str);
@@ -96,13 +96,13 @@ fn prove_three_simp() {
   prove_something("three_simp", "(* a 3)", rules, &[]);
 }
 
-fn intersect_and_dump(name: &str, egg1: &EGraph, egg2: &EGraph) {
-  let intersection = intersect(&egg1, &egg2);
-  intersection
-    .dot()
-    .to_dot(format!("tests/{}-intersect.dot", name))
-    .unwrap();
-}
+// fn intersect_and_dump(name: &str, egg1: &EGraph, egg2: &EGraph) {
+//   let intersection = intersect(&egg1, &egg2);
+//   intersection
+//     .dot()
+//     .to_dot(format!("tests/{}-intersect.dot", name))
+//     .unwrap();
+// }
 
 #[test]
 fn prove_two_three_simp() {
@@ -112,5 +112,5 @@ fn prove_two_three_simp() {
   let egg1 = get_egraph("(* a 2)", rules1);
   let egg2 = get_egraph("(* a 3)", rules2);
 
-  intersect_and_dump("two_three_simp-intersect", &egg1, &egg2);
+  // intersect_and_dump("two_three_simp-intersect", &egg1, &egg2);
 }

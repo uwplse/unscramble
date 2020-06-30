@@ -15,6 +15,7 @@ define_language! {
 }
 
 type EGraph = egg::EGraph<Prop, ()>;
+type RootedEGraph = unscramble::RootedEGraph<Prop, ()>;
 type Rewrite = egg::Rewrite<Prop, ()>;
 
 struct CostFn;
@@ -133,20 +134,22 @@ fn prove_simple() {
   prove_something("simple", "true", rules, &["(& true (~ false))"]);
 }
 
-fn get_egraph(start: &str, rewrites: &[Rewrite]) -> EGraph {
+fn get_rooted_egraph(start: &str, rewrites: &[Rewrite]) -> RootedEGraph {
   let start_expr: RecExpr<_> = start.parse().unwrap();
 
-  Runner::default()
+  let runner = Runner::default()
     .with_iter_limit(20)
     .with_node_limit(5_000)
     .with_expr(&start_expr)
-    .run(rewrites)
-    .egraph
+    .run(rewrites);
+
+  (runner.egraph, vec![runner.roots[0]])
 }
 
-fn intersect_and_dump(name: &str, egg1: &EGraph, egg2: &EGraph) -> EGraph {
+fn intersect_and_dump(name: &str, egg1: &RootedEGraph, egg2: &RootedEGraph) -> RootedEGraph {
   let intersection = intersect(&egg1, &egg2);
   intersection
+    .0
     .dot()
     .to_dot(format!("tests/{}-intersect.dot", name))
     .unwrap();
@@ -212,13 +215,13 @@ fn prove_xor() {
     input4x(),
     input4y(),
   ];
-  let egg1 = get_egraph("false", rules1);
-  let egg2 = get_egraph("true", rules2);
-  let egg3 = get_egraph("true", rules3);
-  let egg4 = get_egraph("false", rules4);
+  let egg1 = get_rooted_egraph("false", rules1);
+  let egg2 = get_rooted_egraph("true", rules2);
+  let egg3 = get_rooted_egraph("true", rules3);
+  let egg4 = get_rooted_egraph("false", rules4);
 
-  egg1.dot().to_dot(format!("tests/egg1.dot")).unwrap();
-  egg2.dot().to_dot(format!("tests/egg2.dot")).unwrap();
+  egg1.0.dot().to_dot(format!("tests/egg1.dot")).unwrap();
+  egg2.0.dot().to_dot(format!("tests/egg2.dot")).unwrap();
 
   let basket = vec![egg2, egg3, egg4];
 
@@ -227,9 +230,9 @@ fn prove_xor() {
     println!("iteration {}", i);
     unscrambled_egg = intersect_and_dump(format!("xor-{}", i).as_str(), &unscrambled_egg, egg);
 
-    let mut extractor = Extractor::new(&unscrambled_egg, AstSize);
-    for eclass in unscrambled_egg.classes() {
-      let (best_cost, best) = extractor.find_best(eclass.id);
+    let mut extractor = Extractor::new(&unscrambled_egg.0, AstSize);
+    for root_id in &unscrambled_egg.1 {
+      let (best_cost, best) = extractor.find_best(*root_id);
       println!("best cost {}", best_cost);
       println!("best {}", best);
     }
