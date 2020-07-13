@@ -45,20 +45,20 @@ fn enode_map<L: Language, N: Analysis<L>>(g: &EGraph<L, N>) -> HashMap<String, V
   map
 }
 
-pub fn intersect<L: Language, N: Analysis<L>>(
-  (a, a_roots): &RootedEGraph<L, N>,
-  (b, b_roots): &RootedEGraph<L, N>,
+pub fn intersect<L: Language, Na: Analysis<L>, Nb: Analysis<L>>(
+  (a, a_roots): &RootedEGraph<L, Na>,
+  (b, b_roots): &RootedEGraph<L, Nb>,
 ) -> RootedEGraph<L, ()> {
   let map_a = enode_map(a);
-  println!("A map:");
-  for (key, value) in &map_a {
-    println!("  {}: {:?}", key, value);
-  }
+  // println!("A map:");
+  // for (key, value) in &map_a {
+  //   println!("  {}: {:?}", key, value);
+  // }
   let map_b = enode_map(b);
-  println!("B map:");
-  for (key, value) in &map_b {
-    println!("  {}: {:?}", key, value);
-  }
+  // println!("B map:");
+  // for (key, value) in &map_b {
+  //   println!("  {}: {:?}", key, value);
+  // }
 
   // TODO: lazy bottom-up construction to avoid enumerating spurious states
   // construct worklist
@@ -72,7 +72,7 @@ pub fn intersect<L: Language, N: Analysis<L>>(
     }
   }
 
-  println!("generated worklist: {:?}", worklist);
+  // println!("generated worklist: {:?}", worklist);
 
   let mut intersection: EGraph<L, ()> = EGraph::new(()); /* TODO: transfer analysis */
   let mut intersection_roots: Vec<Id> = vec![];

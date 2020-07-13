@@ -49,39 +49,18 @@ macro_rules! rule {
     };
 }
 
-macro_rules! rev_rule {
-  ($name:ident, $left:literal, $right:literal) => {
-      #[allow(dead_code)]
-      fn $name() -> Rewrite {
-          rewrite!(stringify!($name); $right => $left)
-      }
-  };
-}
+rule! {not_true, "false", "(~ true)"}
+rule! {not_false, "true", "(~ false)"}
 
-// rule! {def_imply, def_imply_flip,   "(-> ?a ?b)",       "(| (~ ?a) ?b)"          }
-// rule! {double_neg, double_neg_flip,  "(~ (~ ?a))",       "?a"                     }
-// rule! {assoc_or,    "(| ?a (| ?b ?c))", "(| (| ?a ?b) ?c)"       }
-// rule! {dist_and_or, "(& ?a (| ?b ?c))", "(| (& ?a ?b) (& ?a ?c))"}
-// rule! {dist_or_and, "(| ?a (& ?b ?c))", "(& (| ?a ?b) (| ?a ?c))"}
-// rule! {comm_or,     "(| ?a ?b)",        "(| ?b ?a)"              }
-// rule! {comm_and,    "(& ?a ?b)",        "(& ?b ?a)"              }
-// rule! {lem,         "(| ?a (~ ?a))",    "true"                      }
-// rule! {or_true,     "(| ?a true)",         "true"                      }
-// rule! {and_true,    "(& ?a true)",         "?a"                     }
-// rule! {contrapositive, "(-> ?a ?b)",    "(-> (~ ?b) (~ ?a))"     }
-// rule! {lem_imply, "(& (-> ?a ?b) (-> (~ ?a) ?c))", "(| ?b ?c)"}
-rev_rule! {not_true, "(~ true)", "false"}
-rev_rule! {not_false, "(~ false)", "true"}
+rule! {and_ff, "false", "(& false false)"}
+rule! {and_ft, "false", "(& false true)"}
+rule! {and_tf, "false", "(& true false)"}
+rule! {and_tt, "true", "(& true true)"}
 
-rev_rule! {and_ff, "(& false false)", "false"}
-rev_rule! {and_ft, "(& false true)", "false"}
-rev_rule! {and_tf, "(& true false)", "false"}
-rev_rule! {and_tt, "(& true true)", "true"}
-
-rev_rule! {or_ff, "(| false false)", "false"}
-rev_rule! {or_ft, "(| false true)", "true"}
-rev_rule! {or_tf, "(| true false)", "true"}
-rev_rule! {or_tt, "(| true true)", "true"}
+rule! {or_ff, "false", "(| false false)"}
+rule! {or_ft, "true", "(| false true)"}
+rule! {or_tf, "true", "(| true false)"}
+rule! {or_tt, "true", "(| true true)"}
 
 rule! {input1x, "false", "x"}
 rule! {input1y, "false", "y"}
@@ -215,6 +194,14 @@ fn prove_xor() {
     input4x(),
     input4y(),
   ];
+  let inputs = &[
+    (input1x(), input1y()),
+    (input2x(), input2y()),
+    (input3x(), input3y()),
+    (input4x(), input4y()),
+  ];
+  let outputs = &["false", "true", "true", "false"];
+
   let egg1 = get_rooted_egraph("false", rules1);
   let egg2 = get_rooted_egraph("true", rules2);
   let egg3 = get_rooted_egraph("true", rules3);
@@ -223,12 +210,21 @@ fn prove_xor() {
   egg1.0.dot().to_dot(format!("tests/egg1.dot")).unwrap();
   egg2.0.dot().to_dot(format!("tests/egg2.dot")).unwrap();
 
-  let basket = vec![egg2, egg3, egg4];
+  let basket = vec![&egg1, &egg2, &egg3, &egg4];
 
-  let mut unscrambled_egg = egg1;
+  let mut unscrambled_egg = egg1.clone();
   for (i, egg) in basket.iter().enumerate() {
-    println!("iteration {}", i);
-    unscrambled_egg = intersect_and_dump(format!("xor-{}", i).as_str(), &unscrambled_egg, egg);
+    println!(
+      "iteration {} [({}, {})] -> {}",
+      i,
+      inputs[i].0.long_name(),
+      inputs[i].1.long_name(),
+      outputs[i]
+    );
+
+    if i > 0 {
+      unscrambled_egg = intersect_and_dump(format!("xor-{}", i).as_str(), &unscrambled_egg, &egg);
+    }
 
     let mut extractor = Extractor::new(&unscrambled_egg.0, AstSize);
     for root_id in &unscrambled_egg.1 {
@@ -238,4 +234,14 @@ fn prove_xor() {
     }
     println!();
   }
+  // let eggo1 = intersect(&egg1, &egg2);
+  // let eggo2 = intersect(&egg3, &egg4);
+  // let leggo = intersect(&eggo1, &eggo2);
+
+  // let mut extractor = Extractor::new(&leggo.0, AstSize);
+  // for root_id in &leggo.1 {
+  //   let (best_cost, best) = extractor.find_best(*root_id);
+  //   println!("best cost {}", best_cost);
+  //   println!("best {}", best);
+  // }
 }

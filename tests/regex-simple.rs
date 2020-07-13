@@ -146,32 +146,32 @@ fn get_egraph(start: &str, rewrites: &[Rewrite]) -> EGraph {
     .egraph
 }
 
-fn intersect_and_dump(name: &str, egg1: &EGraph, egg2: &EGraph) -> EGraph {
-  let intersection = intersect(&egg1, &egg2);
-  intersection
-    .dot()
-    .to_dot(format!("tests/{}-intersect.dot", name))
-    .unwrap();
-  intersection
-}
+// fn intersect_and_dump(name: &str, egg1: &EGraph, egg2: &EGraph) -> EGraph {
+//   let intersection = intersect(&egg1, &egg2);
+//   intersection
+//     .dot()
+//     .to_dot(format!("tests/{}-intersect.dot", name))
+//     .unwrap();
+//   intersection
+// }
 
-#[test]
-fn simple_regex_intersect() {
-  let _ = env_logger::builder().is_test(true).try_init();
-  let rules = &[
-    seq_left(),
-    seq_right(),
-    seq_assoc_left(),
-    seq_assoc_right(),
-    plus_end(),
-    plus_continue(),
-  ];
+// #[test]
+// fn simple_regex_intersect() {
+//   let _ = env_logger::builder().is_test(true).try_init();
+//   let rules = &[
+//     seq_left(),
+//     seq_right(),
+//     seq_assoc_left(),
+//     seq_assoc_right(),
+//     plus_end(),
+//     plus_continue(),
+//   ];
 
-  let egg_emp = get_egraph("emp", rules);
-  let egg_a = get_egraph("a", rules);
+//   let egg_emp = get_egraph("emp", rules);
+//   let egg_a = get_egraph("a", rules);
 
-  intersect_and_dump(format!("regex/emp-a").as_str(), &egg_emp, &egg_a);
-}
+//   intersect_and_dump(format!("regex/emp-a").as_str(), &egg_emp, &egg_a);
+// }
 
 // #[test]
 // fn prove_simple() {
