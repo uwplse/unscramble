@@ -2,6 +2,8 @@ use egg::*;
 use rand::{seq::SliceRandom, Rng, SeedableRng};
 use rand_pcg::Pcg64;
 use std::collections::hash_map::HashMap;
+use std::convert::TryInto;
+use std::time::{Duration, Instant};
 use unscramble::*;
 
 type EGraph = egg::EGraph<Math, MathInterpreter>;
@@ -52,8 +54,10 @@ struct MathSynth {
     rng: Pcg64,
     variables: Vec<egg::Symbol>,
     constants: Vec<Constant>,
+    var_prob: f64,
 }
 
+#[derive(Debug)]
 struct SynthesisParams {
     iters: usize,
     per_iter: usize,
@@ -64,7 +68,7 @@ fn make_node(synth: &mut MathSynth, egraph: &EGraph, choices: Option<&Vec<Id>>) 
     let classes: Vec<_> = egraph.classes().collect();
     macro_rules! mk {
         () => {
-            if synth.rng.gen_bool(0.5) {
+            if synth.rng.gen_bool(synth.var_prob) {
                 synth.rng.gen_range(0, synth.variables.len() as Id)
             } else if let Some(choices) = choices {
                 *choices.choose(&mut synth.rng).unwrap()
@@ -100,9 +104,19 @@ fn random_egraph(synth: &mut MathSynth, params: &SynthesisParams) -> EGraph {
     let mut egraph = initial_egraph(synth, params);
 
     for it in 0..params.iters {
-        let ids = egraph.classes().map(|c| c.id).collect();
+        let mut ids: Vec<Id> = egraph.classes().map(|c| c.id).collect();
         for _ in 0..params.per_iter {
-            egraph.add(make_node(synth, &egraph, Some(&ids)));
+            let mut maybe_ids = None;
+            let mut update_ids = true;
+            if ids.len() > synth.variables.len() + synth.constants.len() {
+                maybe_ids = Some(&ids);
+                update_ids = false;
+            }
+
+            egraph.add(make_node(synth, &egraph, maybe_ids));
+            if update_ids {
+                ids = egraph.classes().map(|c| c.id).collect();
+            }
         }
     }
     egraph.rebuild(); // TODO: is this necessary?
@@ -116,18 +130,27 @@ fn extract_rewrites<N: Analysis<Math>>(
     let mut extractor = Extractor::new(&egraph, AstSize);
     let mut rewrites = vec![];
 
+    // TODO: redo this garbage
     for class in egraph.classes() {
         let mut exprs = vec![];
         for enode in class.iter() {
             let mut expr = RecExpr::default();
             let mut cost = 0;
             let mut id_map: HashMap<Id, Id> = HashMap::new();
+            // this might be wrong, too complicated
             for child_id in enode.children() {
                 let (child_cost, child_rexpr) = extractor.find_best(*child_id);
                 cost += child_cost;
-                for child_enode in child_rexpr.as_ref() {
-                    let new_child_id = expr.add(child_enode.clone());
-                    id_map.insert(*child_id, new_child_id);
+                let mut child_id_map: HashMap<Id, Id> = HashMap::new();
+                for (i, child_enode) in child_rexpr.as_ref().iter().enumerate() {
+                    let mut new_child_enode = child_enode.clone();
+                    new_child_enode.update_children(|old_id| *child_id_map.get(&old_id).unwrap());
+                    let new_child_id = expr.add(new_child_enode);
+                    child_id_map.insert(i.try_into().unwrap(), new_child_id);
+
+                    if i == child_rexpr.as_ref().len() - 1 {
+                        id_map.insert(*child_id, new_child_id);
+                    }
                 }
             }
             let mut new_enode = enode.clone();
@@ -184,6 +207,7 @@ fn math_rand() {
             egg::Symbol::from("z"),
         ],
         constants: vec![0, 1],
+        var_prob: 0.8,
     };
 
     let params = SynthesisParams {
@@ -205,7 +229,7 @@ fn math_rand() {
 }
 
 #[test]
-fn math_synth() {
+fn synthesize_math() {
     let mut synth = MathSynth {
         rng: Pcg64::seed_from_u64(0),
         variables: vec![
@@ -214,12 +238,13 @@ fn math_synth() {
             egg::Symbol::from("z"),
         ],
         constants: vec![0, 1],
+        var_prob: 0.1,
     };
-    let samples = 10;
-    let iters = 4;
-    let per_iter = 100;
-    let rng_low = -30;
-    let rng_high = 30;
+    let samples = 3;
+    let iters = 5;
+    let per_iter = 1200;
+    let rng_low = -100;
+    let rng_high = 100;
 
     let mut eggo: Option<egg::EGraph<Math, ()>> = None;
     let mut eggs = vec![];
@@ -245,9 +270,16 @@ fn math_synth() {
             .into_iter()
             .collect(),
         };
-        eggs.push(random_egraph(&mut synth, &params));
+        println!("{:?}", params);
+        let rand_egg = random_egraph(&mut synth, &params);
+        println!(
+            "  generated egraph size: {}",
+            rand_egg.total_number_of_nodes()
+        );
+        eggs.push(rand_egg);
     }
 
+    println!("intersecting egraphs...");
     for i in 1..eggs.len() {
         if let None = eggo {
             // TODO: fix typedef for RootedEGraph
@@ -256,56 +288,13 @@ fn math_synth() {
             eggo = Some(intersect(&(leggo.clone(), vec![]), &(eggs[i].clone(), vec![])).0);
         }
     }
-
+    println!("  done!");
     println!("extracted rewrites:");
-    for (cost, (lhs, rhs)) in extract_rewrites(&eggo.unwrap()) {
-        println!("[{}] {} <=> {}", cost, lhs.pretty(80), rhs.pretty(80));
+    for (cost, (lhs, rhs)) in extract_rewrites(eggo.as_ref().unwrap()) {
+        println!("  [{}] {} <=> {}", cost, lhs.pretty(80), rhs.pretty(80));
     }
-
-    // let params1 = SynthesisParams {
-    //     iters: 4,
-    //     per_iter: 60,
-    //     env: vec![
-    //         (egg::Symbol::from("x"), 2),
-    //         (egg::Symbol::from("y"), 3),
-    //         (egg::Symbol::from("z"), 4),
-    //     ]
-    //     .into_iter()
-    //     .collect(),
-    // };
-    // let params2 = SynthesisParams {
-    //     iters: 4,
-    //     per_iter: 60,
-    //     env: vec![
-    //         (egg::Symbol::from("x"), -1),
-    //         (egg::Symbol::from("y"), 6),
-    //         (egg::Symbol::from("z"), 7),
-    //     ]
-    //     .into_iter()
-    //     .collect(),
-    // };
-
-    // let rand_egg1 = random_egraph(&mut synth, &params1);
-    // let rand_egg2 = random_egraph(&mut synth, &params2);
-    // rand_egg1.dot().to_dot("target/rand_egg1.dot");
-    // rand_egg2.dot().to_dot("target/rand_egg2.dot");
-
-    // let r1 = rand_egg1.total_number_of_nodes();
-    // let r2 = rand_egg2.total_number_of_nodes();
-
-    // let (eggo, _) = intersect(&(rand_egg1, vec![]), &(rand_egg2, vec![]));
-
-    // eggo.dot().to_dot("target/eggo.dot");
-    // println!("{:?}", eggo.dump());
-    // println!(
-    //     "size {} intersect size {} = size {}",
-    //     r1,
-    //     r2,
-    //     eggo.total_number_of_nodes()
-    // );
-
-    // println!("extracted rewrites:");
-    // for (cost, (lhs, rhs)) in extract_rewrites(&eggo) {
-    //     println!("[{}] {} ~> {}", cost, lhs.pretty(80), rhs.pretty(80));
-    // }
+    println!(
+        "final egraph size: {}",
+        eggo.as_ref().unwrap().total_number_of_nodes()
+    );
 }

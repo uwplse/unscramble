@@ -18,24 +18,6 @@ type EGraph = egg::EGraph<Prop, ()>;
 type RootedEGraph = unscramble::RootedEGraph<Prop, ()>;
 type Rewrite = egg::Rewrite<Prop, ()>;
 
-struct CostFn;
-impl CostFunction<Prop> for CostFn {
-  type Cost = f64;
-
-  // you're passed in an enode whose children are costs instead of eclass ids
-  fn cost<C>(&mut self, enode: &Prop, mut costs: C) -> Self::Cost
-  where
-    C: FnMut(Id) -> Self::Cost,
-  {
-    let op_cost = match enode {
-      Prop::X => 0.001,
-      Prop::Y => 0.001,
-      _ => 1.0,
-    };
-    enode.fold(op_cost, |sum, id| sum + costs(id))
-  }
-}
-
 macro_rules! rule {
     ($name:ident, $left:literal, $right:literal) => {
         #[allow(dead_code)]
@@ -48,6 +30,8 @@ macro_rules! rule {
         rule!($name2, $right, $left);
     };
 }
+
+// "less complex" -> "more complex"
 
 rule! {not_true, "false", "(~ true)"}
 rule! {not_false, "true", "(~ false)"}
@@ -62,17 +46,20 @@ rule! {or_ft, "true", "(| false true)"}
 rule! {or_tf, "true", "(| true false)"}
 rule! {or_tt, "true", "(| true true)"}
 
-rule! {input1x, "false", "x"}
-rule! {input1y, "false", "y"}
-
-rule! {input2x, "false", "x"}
-rule! {input2y, "true", "y"}
-
-rule! {input3x, "true", "x"}
-rule! {input3y, "false", "y"}
-
-rule! {input4x, "true", "x"}
-rule! {input4y, "true", "y"}
+fn bool_inv_semantics() -> Vec<Rewrite> {
+  vec![
+    not_true(),
+    not_false(),
+    and_ff(),
+    and_ft(),
+    and_tf(),
+    and_tt(),
+    or_ff(),
+    or_ft(),
+    or_tf(),
+    or_tt(),
+  ]
+}
 
 fn prove_something(name: &str, start: &str, rewrites: &[Rewrite], goals: &[&str]) {
   let _ = env_logger::builder().is_test(true).try_init();
@@ -136,90 +123,30 @@ fn intersect_and_dump(name: &str, egg1: &RootedEGraph, egg2: &RootedEGraph) -> R
 }
 
 #[test]
-fn prove_xor() {
+fn synthesize_xor() {
   let _ = env_logger::builder().is_test(true).try_init();
-  let rules1 = &[
-    not_true(),
-    not_false(),
-    and_ff(),
-    and_ft(),
-    and_tf(),
-    and_tt(),
-    or_ff(),
-    or_ft(),
-    or_tf(),
-    or_tt(),
-    input1x(),
-    input1y(),
-  ];
-  let rules2 = &[
-    not_true(),
-    not_false(),
-    and_ff(),
-    and_ft(),
-    and_tf(),
-    and_tt(),
-    or_ff(),
-    or_ft(),
-    or_tf(),
-    or_tt(),
-    input2x(),
-    input2y(),
-  ];
-  let rules3 = &[
-    not_true(),
-    not_false(),
-    and_ff(),
-    and_ft(),
-    and_tf(),
-    and_tt(),
-    or_ff(),
-    or_ft(),
-    or_tf(),
-    or_tt(),
-    input3x(),
-    input3y(),
-  ];
-  let rules4 = &[
-    not_true(),
-    not_false(),
-    and_ff(),
-    and_ft(),
-    and_tf(),
-    and_tt(),
-    or_ff(),
-    or_ft(),
-    or_tf(),
-    or_tt(),
-    input4x(),
-    input4y(),
-  ];
+  // (x, y)
   let inputs = &[
-    (input1x(), input1y()),
-    (input2x(), input2y()),
-    (input3x(), input3y()),
-    (input4x(), input4y()),
+    ("false", "false"),
+    ("false", "true"),
+    ("true", "false"),
+    ("true", "true"),
   ];
   let outputs = &["false", "true", "true", "false"];
 
-  let egg1 = get_rooted_egraph("false", rules1);
-  let egg2 = get_rooted_egraph("true", rules2);
-  let egg3 = get_rooted_egraph("true", rules3);
-  let egg4 = get_rooted_egraph("false", rules4);
+  let mut eggs = vec![];
+  for (i, (x_val, y_val)) in inputs.iter().enumerate() {
+    let mut rules = bool_inv_semantics();
+    rules.push(rewrite!("x_in"; (x_val.parse::<Pattern<Prop>>().unwrap()) => "x"));
+    rules.push(rewrite!("y_in"; (y_val.parse::<Pattern<Prop>>().unwrap()) => "y"));
+    eggs.push(get_rooted_egraph(outputs[i], &rules));
+  }
 
-  egg1.0.dot().to_dot(format!("tests/egg1.dot")).unwrap();
-  egg2.0.dot().to_dot(format!("tests/egg2.dot")).unwrap();
-
-  let basket = vec![&egg1, &egg2, &egg3, &egg4];
-
-  let mut unscrambled_egg = egg1.clone();
-  for (i, egg) in basket.iter().enumerate() {
+  let mut unscrambled_egg = eggs[0].clone();
+  for (i, egg) in eggs.iter().enumerate() {
     println!(
-      "iteration {} [({}, {})] -> {}",
-      i,
-      inputs[i].0.long_name(),
-      inputs[i].1.long_name(),
-      outputs[i]
+      "intersection {} {{x={}, y={}}} -> {}",
+      i, inputs[i].0, inputs[i].1, outputs[i]
     );
 
     if i > 0 {
@@ -234,14 +161,4 @@ fn prove_xor() {
     }
     println!();
   }
-  // let eggo1 = intersect(&egg1, &egg2);
-  // let eggo2 = intersect(&egg3, &egg4);
-  // let leggo = intersect(&eggo1, &eggo2);
-
-  // let mut extractor = Extractor::new(&leggo.0, AstSize);
-  // for root_id in &leggo.1 {
-  //   let (best_cost, best) = extractor.find_best(*root_id);
-  //   println!("best cost {}", best_cost);
-  //   println!("best {}", best);
-  // }
 }
